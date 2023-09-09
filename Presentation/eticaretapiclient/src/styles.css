@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 99%;
+  width: 99%;
+  font-family: 'GRoboto'!important;
+  font-size: large
+}
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+@font-face {
+  font-family: 'GRoboto';
+  src: url('app/fonts/Roboto-Regular.ttf');
+}
