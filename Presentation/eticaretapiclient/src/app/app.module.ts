@@ -24,8 +24,8 @@ import { MatButtonModule } from '@angular/material/button';
     AdminModule, UiModule,
     ToastrModule.forRoot(),
     NgxSpinnerModule,
-    HttpClientModule,
-    MatButtonModule, 
+    HttpClientModule, 
+    MatButtonModule
   ],
   providers: [
     {
