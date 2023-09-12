@@ -12,7 +12,10 @@ export class BasketsComponent extends BaseComponent{
   constructor(spinner: NgxSpinnerService) {
     super(spinner)
 
-    this.showSpinner(SpinnerType.BallAtom,true)
+    this.showSpinner({
+      spinnerNameType: SpinnerType.BallAtom,
+      IsClose: true 
+    })
 
   }
 }

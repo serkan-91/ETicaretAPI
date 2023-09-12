@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@nguniversal/module-map-ngfactory-loader": "^8.2.6"
+    "@nguniversal/module-map-ngfactory-loader": "^7.0.2",
+    "ng-dialog-animation": "^9.0.4"
   }
 }

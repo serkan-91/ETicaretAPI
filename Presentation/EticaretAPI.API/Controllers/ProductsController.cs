@@ -1,8 +1,8 @@
-﻿using EticaretAPI.API.Pages; 
+﻿using EticaretAPI.API.Pages;
 using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;
 using EticaretAPI.Application.ViewModels.Products;
-using EticaretAPI.Domain.Entities; 
+using EticaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -13,30 +13,39 @@ namespace EticaretAPI.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IProductReadRepository _productReadRepository; 
-
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository )
+        private readonly IProductReadRepository _productReadRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ProductsController(
+            IProductWriteRepository productWriteRepository,
+            IProductReadRepository productReadRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             _productWriteRepository = productWriteRepository;
-            _productReadRepository = productReadRepository; 
+            _productReadRepository = productReadRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAsync([FromQuery]Paginations pagination)
+        public ActionResult Get([FromQuery] Paginations pagination)
         {
 
-           var totalCount = _productReadRepository.GetAll(false).Count();
-            var products = _productReadRepository.GetAll(false).Select(p => new
-            {
-                p.Id,
-                p.Name,
-                p.Stock,
-                p.Price,
-                p.CreatedDate,
-                p.UpdatedDate
-            }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
+            var totalCount = _productReadRepository.GetAll(false).Count();
+            var products = _productReadRepository.GetAll(false).Select(
+                p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Stock,
+                    p.Price,
+                    p.CreatedDate,
+                    p.UpdatedDate
+                })
+                .OrderBy(p => p.Name)
+              .Skip(pagination.Page * pagination.Size)
+            .Take(pagination.Size);
 
-            return Ok(new {
+            return Ok(new
+            {
                 products,
                 totalCount
             });
@@ -49,8 +58,8 @@ namespace EticaretAPI.API.Controllers
         //}
 
         [HttpPost]
-        public   async Task<ActionResult> Post(VM_Create_Product model   )
-        { 
+        public async Task<ActionResult> Post(VM_Create_Product model)
+        {
             await _productWriteRepository.AddAsync(new()
             {
                 Name = model.Name,
@@ -58,19 +67,19 @@ namespace EticaretAPI.API.Controllers
                 Stock = model.Stock
             });
             await _productWriteRepository.SaveAsync();
-            return StatusCode((int)HttpStatusCode.Created );
+            return StatusCode((int)HttpStatusCode.Created);
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(VM_Update_Product model)
         {
             Product product = await _productReadRepository.GetByIdAsync(model.Id);
-             product.Stock  = model.Stock;
-             product.Name = model.Name;
-             product.Price  = model.Price;
+            product.Stock = model.Stock;
+            product.Name = model.Name;
+            product.Price = model.Price;
             await _productWriteRepository.SaveAsync();
 
-            return Ok(); 
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -81,5 +90,33 @@ namespace EticaretAPI.API.Controllers
 
             return Ok();
         }
+
+        [HttpPost("[action]")]
+
+        public async Task<IActionResult> Upload()
+        {
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            Random r = new();
+
+            foreach (IFormFile file in Request.Form.Files)
+            {
+                string fullPath = Path.Combine(uploadPath, $"{r.Next() }{Path.GetExtension(file.FileName)}");
+
+                using FileStream fileStream = new(fullPath, FileMode.Create, FileAccess.Write,
+
+                FileShare.None, 1024 * 1024, useAsync: false);
+
+                await file.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+            }
+            return Ok();
+        }
+
     }
 }

@@ -8,6 +8,8 @@ import { AlertifyService, MessageType, Position } from '../../../../services/adm
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { ProductsWithTotalCount } from '../../../../contracts/ProductsWithTotalCount';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
+import { DialogService } from '../../../../services/common/dialog.service';
+import { faI } from '@fortawesome/free-solid-svg-icons';
 
 declare var $: any;
 
@@ -17,7 +19,7 @@ declare var $: any;
   styleUrls: ['./list.component.css'],
 })
 
-export class ListComponent extends BaseComponent   {
+export class ListComponent extends BaseComponent {
 
   all_Products: ProductsWithTotalCount = { products: [], totalCount: 0 };
   dataSource = new MatTableDataSource<List_Product>(this.all_Products.products);
@@ -28,10 +30,12 @@ export class ListComponent extends BaseComponent   {
     spinner: NgxSpinnerService,
     private productService: ProductService,
     private alertifyService: AlertifyService,
-    private faIconService : FaIconService
+    private faIconService: FaIconService,
+    private dialogService: DialogService
   )
   {
     super(spinner);
+ 
   }
   faXmark = this.faIconService.faXmark; 
   faPen = this.faIconService.faPen;
@@ -48,17 +52,22 @@ export class ListComponent extends BaseComponent   {
   async GetProducts() {
     try {
      
-      this.showSpinner(SpinnerType.BallAtom);
-       
+      this.showSpinner({
+        spinnerNameType: SpinnerType.BallAtom 
+        
+      });
+    
       await this.productService.list(
         this.paginator ? this.paginator.pageIndex : 0,
         this.paginator ? this.paginator.pageSize : 5,
         (data: ProductsWithTotalCount) => {
-          // Handle successful data retrieval, e.g., assign data to a component property
-          this.all_Products = data;
-          this.dataSource = new MatTableDataSource<List_Product>(this.all_Products.products);
-          this.paginator.length = this.all_Products.totalCount;
-
+          setTimeout(async () => {
+            // Handle successful data retrieval, e.g., assign data to a component property
+            this.all_Products = data;
+            this.dataSource = new MatTableDataSource<List_Product>(this.all_Products.products);
+            this.paginator.length = this.all_Products.totalCount;
+            this.hideSpinner(SpinnerType.BallAtom);
+          }, 500);
         },
         (errorMessage: string) => {
           this.hideSpinner(SpinnerType.BallAtom);
@@ -75,26 +84,26 @@ export class ListComponent extends BaseComponent   {
     }
   }
 
+   
 
-  //delete(id, event) {
-  //  alert(id)
-  //  const img: HTMLImageElement = event.srcElement;
-  //  $(img.parentElement.parentElement.parentElement).fadeOut(2000)
-  //}
-
-
-  async pageChanged() {
+  async pageChanged(): Promise<void> {
 
     await this.GetProducts();
   }
-  async ngOnInit() {
-   await this.GetProducts();
+
+  async ngOnInit(): Promise<void> {
+    await this.GetProducts();
+ /*   await this.GetProducts();*/
+    // Servis üzerinden olayı dinleyerek GetProducts() fonksiyonunu tetikleyin
+     this.dialogService.callbackProducts$.subscribe(async() => {
+       await this.GetProducts();
+    });
   }
  
   onDeleteClick() {
     // GetProducts() işlemini burada çağırın
     this.GetProducts();
   }
-}
-
+   
+} 
 

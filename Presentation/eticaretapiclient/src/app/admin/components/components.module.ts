@@ -4,7 +4,7 @@ import { ProductsModule } from './products/products.module';
 import { CustomersModule } from './customers/customers.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { OrdersModule } from './orders/orders.module';
-import { MatPaginatorModule } from '@angular/material/paginator'; 
+import { MatPaginatorModule } from '@angular/material/paginator';  
 
 @NgModule({
   declarations: [  ],
@@ -14,7 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     OrdersModule,
     CustomersModule,
     DashboardModule,
-    MatPaginatorModule
+    MatPaginatorModule,   
   ]
 })
 export class ComponentsModule { }

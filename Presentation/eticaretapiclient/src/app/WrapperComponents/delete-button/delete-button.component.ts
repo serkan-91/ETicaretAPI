@@ -1,14 +1,17 @@
-import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 import { FaIconService } from '../../services/common/fa-Icon.service';
-import { ProductService } from '../../services/common/models/product.service';
-import { BaseComponent, SpinnerType } from '../../base/base.component';
-import {  NgxSpinnerService } from 'ngx-spinner';
+import { BaseComponent } from '../../base/base.component';
+import { NgxSpinnerService } from 'ngx-spinner'; 
+import { DeleteDatas, DeleteDialogComponent } from '../../dialogs/delete-dialog/delete-dialog.component';
+ 
 
-declare var $: any
+import { DialogService } from '../../services/common/dialog.service';
+import { MatIcon } from '@angular/material/icon';
+
 @Component({
   selector: 'app-delete-button',
   template: `
- <button mat-raised-button color="warn" (click)="onDeleteClick()" >
+ <button mat-raised-button color="warn" (click)="openDeleteDialog()" >
   <mat-icon class="noTextMatIcon">
     <fa-icon [icon]="faXmark"></fa-icon>
   </mat-icon>
@@ -16,37 +19,47 @@ declare var $: any
 
 `,
   styleUrls: ['./delete-button.component.css'],
-   
+
 })
 
 export class DeleteButtonComponent extends BaseComponent {
- 
-
+  
   constructor(
+    spinner: NgxSpinnerService,
     private faIconService: FaIconService,
-    private element: ElementRef,
-    private productService: ProductService,
-    spinner : NgxSpinnerService
-  ) {
-    super(spinner);
+     private dialogService: DialogService,
+    private element: ElementRef, 
+  )
+  {
+    super(spinner );
   }
+
+   deleteDatas: DeleteDatas;
+
   faXmark = this.faIconService.faXmark;
-
+  
+  @Input() controller: string;
   @Input() id: string;
-  @Output() callback: EventEmitter<any> = new EventEmitter();
 
-  async onDeleteClick() {
-    this.showSpinner(SpinnerType.BallAtom)
-     const td: HTMLImageElement = this.element.nativeElement.parentElement
-     const tr = td.parentElement
+  
+  async openDeleteDialog() {
 
-     //console.log(td)
-     await this.productService.delete(td.id);
+    const td: HTMLImageElement = this.element.nativeElement.parentElement
+    const tr = td.parentElement
 
-     $(tr).fadeOut(2000, () => {
-       this.callback.emit();
-     })
+    this.deleteDatas = {
+      Element: tr,
+      Id: this.id,
+      Controller: this.controller
+    }
+
+   this.dialogService.openDialog({
+     componentType: DeleteDialogComponent,
      
-     
+     data: this.deleteDatas
+
+   })
   }
-}
+  
+
+}   

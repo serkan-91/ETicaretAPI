@@ -14,7 +14,11 @@ export class DashboardComponent extends BaseComponent {
   constructor(private alertify: AlertifyService , spinner:NgxSpinnerService) {
     super(spinner);
 
-    this.showSpinner(SpinnerType.BallAtom,true)
+    this.showSpinner({
+      spinnerNameType: SpinnerType.BallAtom,
+      IsClose: true,
+      Delay: 1000
+    })
 
   }
    

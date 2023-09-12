@@ -40,4 +40,8 @@
     <ProjectReference Include="..\..\Insfrastructure\EticaretAPI.Persistence\EticaretAPI.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\resource\product-images\" />
+  </ItemGroup>
+
 </Project>

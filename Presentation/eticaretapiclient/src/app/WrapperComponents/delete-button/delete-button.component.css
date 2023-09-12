@@ -15,3 +15,37 @@ table {
     width: 24px !important;
     font-size: 20px
 }
+
+.fade-in {
+    opacity: 0;
+    transition: opacity 1s ease-in-out; /* 1 saniye süreyle animasyonu uzatın */
+}
+
+    .fade-in.show {
+        opacity: 1;
+    }
+
+.fade-out {
+    opacity: 1;
+    transition: opacity 1s ease-in-out; /* 1 saniye süreyle animasyonu uzatın */
+}
+
+    .fade-out.hide {
+        opacity: 0;
+    }
+/* app-dialog-animations.css */
+.fade-in-enter {
+    opacity: 0;
+}
+
+.fade-in-leave {
+    opacity: 1;
+}
+
+.fade-in-enter-active, .fade-in-leave-active {
+    transition: opacity 0.5s;
+}
+
+.fade-in-leave-active {
+    opacity: 0;
+}
