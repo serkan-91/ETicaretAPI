@@ -1,7 +1,7 @@
 ﻿using EticaretAPI.API.Pages;
 using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;
-using EticaretAPI.Application.Services;
+using EticaretAPI.Application.Storage.Local;
 using EticaretAPI.Application.ViewModels.Products;
 using EticaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -17,23 +17,24 @@ namespace EticaretAPI.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         
-        readonly IFileService _fileService;
         private readonly IFileWriteRepository _fileWriteRepository;
         private readonly IFileReadRepository _fileReadRepository;
         private readonly IProductImageFileReadRepository _productImageFileReadRepository;
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
         private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
         private readonly IInvoiceFileWriteRepository _ınvoiceFileWriteRepository;
+
+        private readonly ILocalStorage _localStorage;
         public ProductsController(
             IProductWriteRepository productWriteRepository,
             IProductReadRepository productReadRepository,
-            IWebHostEnvironment webHostEnvironment,
-            IFileService fileService)
+            IWebHostEnvironment webHostEnvironment, 
+            ILocalStorage localStorage)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _webHostEnvironment = webHostEnvironment;
-            _fileService = fileService;
+            _localStorage = localStorage;
         }
 
         [HttpGet]
@@ -106,11 +107,11 @@ namespace EticaretAPI.API.Controllers
 
         public async Task<IActionResult> Upload()
         {
-            var datas = await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
+            var datas = await _localStorage.UploadAsync("resource/product-images", Request.Form.Files);
             await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
             {
                 FileName = d.fileName,
-                Path = d.path
+                Path = d.pathOrContainerName
             }).ToList());
 
             await _productImageFileWriteRepository.SaveAsync();
