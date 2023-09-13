@@ -1,0 +1,51 @@
+﻿namespace EticaretAPI.Infrastructure.Operations;
+
+public class NameOperation
+
+{
+    public static string CharacterRegulatory(string name)
+
+        => name.Replace("\"", "")
+            .Replace("!", "")
+            .Replace("'", "")
+            .Replace("^", "")
+            .Replace("+", "")
+            .Replace("%", "")
+            .Replace("&", "")
+            .Replace("/", "")
+            .Replace("(", "")
+            .Replace(")", "")
+            .Replace("", "")
+            .Replace("=", "")
+            .Replace("?", "")
+            .Replace("_", "")
+            .Replace("@", "")
+            .Replace("€", "")
+            .Replace("$", "")
+            .Replace("*", "")
+            .Replace("[", "")
+            .Replace("]", "")
+            .Replace("{", "")
+            .Replace("}", "")
+            .Replace(";", "")
+            .Replace(":", "")
+            .Replace("<", "")
+            .Replace(">", "")
+            .Replace("|", "")
+            .Replace(".", "- ")
+            .Replace("~", "")
+                 .Replace("ç", "c")
+                 .Replace("Ç", "C")
+                 .Replace("ğ", "g")
+                 .Replace("Ğ", "G")
+                 .Replace("ı", "i")
+                 .Replace("I", "I")
+                 .Replace("İ", "I")
+                 .Replace("ö", "o")
+                 .Replace("Ö", "O")
+                 .Replace("ş", "s")
+                 .Replace("Ş", "S")
+                 .Replace("ü", "u")
+                 .Replace("Ü", "U");
+     
+}

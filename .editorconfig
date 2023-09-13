@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CA2200: Yığın ayrıntılarını korumak için yeniden oluşturun
+dotnet_diagnostic.CA2200.severity = silent
