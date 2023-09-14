@@ -11,7 +11,7 @@ public class FileService
              string extension = Path.GetExtension(fileName);
 
 
-             int increment = 2;
+   //          int increment = 2;
              
              fileName = NameOperation.CharacterRegulatory(fileName);
 
