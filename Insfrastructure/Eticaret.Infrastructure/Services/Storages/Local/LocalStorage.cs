@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EticaretAPI.Infrastructure.Services.Storage.Local
+namespace EticaretAPI.Infrastructure.Services.Storages.Local
 {
-    public class LocalStorage : ILocalStorage 
+    public class LocalStorage : Storage, ILocalStorage 
     {
 
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -20,17 +20,17 @@ namespace EticaretAPI.Infrastructure.Services.Storage.Local
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task DeleteAsync(string path , string fileName)
+        public void Delete(string path,
+                                      string fileName)
        => File.Delete($"{path}\\{fileName}");
-            
-        
+
         public List<string> GetFiles(string path)
         {
             DirectoryInfo directoryInfo = new(path);
             return directoryInfo.GetFiles().Select(f => f.Name).ToList();
         }
 
-        public bool HasFile(string path , string fileName)
+        public new bool HasFile(string path , string fileName)
         => File.Exists($"{path}\\{fileName}");
 
         public async Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string path , IFormFileCollection files)
@@ -45,9 +45,9 @@ namespace EticaretAPI.Infrastructure.Services.Storage.Local
 
             foreach (IFormFile file in files)
             {
- 
-                 await CopyFileAsync($"{uploadPath}\\{file.FileName}", file);
-                datas.Add((file.FileName, $"{path}\\{file.FileName}"));
+                string fileFormattedName = await FileNameFormatConverterAsync(uploadPath, file.Name, HasFile);
+                 await CopyFileAsync($"{uploadPath}\\{fileFormattedName}", file);
+                datas.Add((fileFormattedName, $"{path}\\{fileFormattedName}"));
                 
             }
             if (results.TrueForAll(r => r.Equals(true)))

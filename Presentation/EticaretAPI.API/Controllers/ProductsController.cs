@@ -1,6 +1,6 @@
-﻿using EticaretAPI.API.Pages;
-using EticaretAPI.Application.Repositories;
+﻿using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;
+using EticaretAPI.Application.Storage;
 using EticaretAPI.Application.Storage.Local;
 using EticaretAPI.Application.ViewModels.Products;
 using EticaretAPI.Domain.Entities;
@@ -15,26 +15,16 @@ namespace EticaretAPI.API.Controllers
     {
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        
-        private readonly IFileWriteRepository _fileWriteRepository;
-        private readonly IFileReadRepository _fileReadRepository;
-        private readonly IProductImageFileReadRepository _productImageFileReadRepository;
         private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
-        private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
-        private readonly IInvoiceFileWriteRepository _ınvoiceFileWriteRepository;
-
-        private readonly ILocalStorage _localStorage;
+        private readonly IStorageService _storageService; 
         public ProductsController(
             IProductWriteRepository productWriteRepository,
-            IProductReadRepository productReadRepository,
-            IWebHostEnvironment webHostEnvironment, 
-            ILocalStorage localStorage)
+            IProductReadRepository productReadRepository, 
+            IStorageService storageService)
         {
             _productWriteRepository = productWriteRepository;
-            _productReadRepository = productReadRepository;
-            _webHostEnvironment = webHostEnvironment;
-            _localStorage = localStorage;
+            _productReadRepository = productReadRepository; 
+            _storageService = storageService;
         }
 
         [HttpGet]
@@ -107,14 +97,17 @@ namespace EticaretAPI.API.Controllers
 
         public async Task<IActionResult> Upload()
         {
-            var datas = await _localStorage.UploadAsync("resource/product-images", Request.Form.Files);
-            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
+            var datas = await _storageService.UploadAsync("files", Request.Form.Files);
+
+            await _productImageFileWriteRepository.AddRangeAsync((List<ProductImageFile>)datas.Select(d =>
+            new ProductImageFile()
             {
                 FileName = d.fileName,
-                Path = d.pathOrContainerName
-            }).ToList());
-
+                Path = d.pathOrContainerName,
+                Storage = _storageService.StorageName
+            }));
             await _productImageFileWriteRepository.SaveAsync();
+
             return Ok();
         }
 

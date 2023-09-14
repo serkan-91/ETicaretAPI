@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EticaretAPI.Application.Storage.Local
+namespace EticaretAPI.Application.Storage
 {
-    public interface ILocalStorage : IStorage
+    public interface IStorageService : IStorage
     {
+
+        public string StorageName { get; }
     }
 }

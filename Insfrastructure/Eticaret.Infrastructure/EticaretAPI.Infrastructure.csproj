@@ -10,4 +10,12 @@
     <ProjectReference Include="..\..\Core\Eticaret.Application\EticaretAPI.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Storages\Amazon\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
+  </ItemGroup>
+
 </Project>

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Eticaret.Domain\EticaretAPI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Storage\Amazon\" />
+  </ItemGroup>
+
 </Project>
