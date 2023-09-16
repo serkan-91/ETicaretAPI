@@ -19,7 +19,8 @@ import { DeleteButtonComponent } from '../WrapperComponents/delete-button/delete
     DeleteDialogComponent    ],
   imports: [
     CommonModule,
-    MatDialogModule, MatButtonModule, MatTableModule, MatListModule, MatFormFieldModule, MatInputModule, MatInputModule
+    MatDialogModule, MatIconModule,MatButtonModule, MatTableModule, MatListModule, MatFormFieldModule, MatInputModule, MatInputModule  
+   
   ] 
 })
 export class DialogModule { }
