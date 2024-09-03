@@ -9,12 +9,8 @@ using System.Threading.Tasks;
 
 namespace EticaretAPI.Persistence.Contexts
 {
-    public class EticaretAPIDbContext : DbContext
+    public class EticaretAPIDbContext(DbContextOptions options) : DbContext(options)
     {
-        public EticaretAPIDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Customer> Customers { get; set; }

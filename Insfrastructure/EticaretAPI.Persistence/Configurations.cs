@@ -7,18 +7,12 @@ using System.Threading.Tasks;
 
 namespace EticaretAPI.Persistence
 {
-    public class Configurations
+    static class Configurations
     {
-        static public string  ConnectionString
-        {
-            get
-            {
-                ConfigurationManager configurationManager = new();
-                configurationManager.SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../EticaretAPI.API"));
-                configurationManager.AddJsonFile("appsettings.json");
-
-                return configurationManager.GetConnectionString("PostgreSQL");
-            }
-        }
+        private static readonly IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../EticaretAPI.API"))
+            .AddJsonFile("appsettings.json")
+            .Build(); 
+        public static string ConnectionString => configuration.GetConnectionString("PostgreSQL");  
     }
 }

@@ -12,14 +12,9 @@ using System.Threading.Tasks;
 namespace EticaretAPI.Persistence.Repositories
 {
 
-    public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
+    public class ReadRepository<T>(EticaretAPIDbContext _context) : IReadRepository<T> where T : BaseEntity
     {
-        private readonly EticaretAPIDbContext _context;
-        public ReadRepository(EticaretAPIDbContext context)
-        {
-            _context = context;
-        }
-
+        //private readonly EticaretAPIDbContext _context = context;
         public DbSet<T> Table => _context.Set<T>();
 
         public IQueryable<T> GetAll(bool tracking = true)
