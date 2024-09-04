@@ -1,29 +1,59 @@
-﻿using EticaretAPI.API.Pages; 
+﻿using EticaretAPI.API.Pages;
 using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;
 using EticaretAPI.Application.ViewModels.Products;
-using EticaretAPI.Domain.Entities; 
+using EticaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace EticaretAPI.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController(
+        IProductWriteRepository _productWriteRepository ,
+        IProductReadRepository _productReadRepository ,
+        IOrderWriteRepository _orderWriteRepository ,
+        IOrderReadRepository _orderReadRepository ,
+        ICustomerWriteRepository _customerWriteRepository
+        ) : ControllerBase
     {
-        private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IProductReadRepository _productReadRepository;
-
-        public ProductsController(IProductWriteRepository productWriteRepository , IProductReadRepository productReadRepository)
+        [HttpGet]
+        public async Task CreateOrder()
         {
-            _productWriteRepository = productWriteRepository;
-            _productReadRepository = productReadRepository;
+            var customerId = Guid.NewGuid();
+            await _customerWriteRepository.AddAsync(new() { Id = customerId , Name = "Muhiddin" });
+            await _orderWriteRepository.AddAsync(new()
+            {
+                Description = "bla bla bla" ,
+                Address = "Ankara Cankaya" ,
+                CustomerId = customerId
+            });
+            await _orderWriteRepository.AddAsync(new()
+            {
+                Description = "bla bla bla 2" ,
+                Address = "Ankara Pusaklar" ,
+                CustomerId = customerId
+            });
+            await _orderWriteRepository.SaveAsync();
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAsync([FromQuery] Paginations pagination)
+        public async Task UpdateOrder()
+        {
+            Order order = await _orderReadRepository.GetByIdAsync("3850b0bb-77c5-48f5-9fff-7d39962d0534");
+            order.Address = "Istanbl";
+            await _orderWriteRepository.SaveAsync();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProduct(string id)
+        {
+            Product getProduct =   await _productReadRepository.FindAsync(id);
+            return Ok(getProduct);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetProductsWithPage([FromQuery] Paginations pagination)
         {
             var totalCount = await _productReadRepository.GetAll(false).CountAsync();
             var products = await _productReadRepository.GetAll(false)
@@ -54,7 +84,7 @@ namespace EticaretAPI.API.Controllers
         //}
 
         [HttpPost]
-        public async Task<ActionResult> Post(VM_Create_Product model)
+        public async Task<IActionResult> Post(VM_Create_Product model)
         {
             await _productWriteRepository.AddAsync(new()
             {
