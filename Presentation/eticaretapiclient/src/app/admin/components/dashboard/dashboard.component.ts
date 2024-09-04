@@ -12,10 +12,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 
 export class DashboardComponent extends BaseComponent {
   constructor(private alertify: AlertifyService , spinner:NgxSpinnerService) {
-    super(spinner);
-
-    this.showSpinner(SpinnerType.BallAtom,true)
-
+    super(spinner); 
+    this.showSpinner(SpinnerType.BallAtom,true) 
   }
    
   m2() {
@@ -24,8 +22,7 @@ export class DashboardComponent extends BaseComponent {
       delay: 15,
       position: Position.BottomCenter
     });
-  }
-
+  } 
   d() {
     this.alertify.dismiss();
   }

@@ -13,19 +13,13 @@ import { ListComponent } from './list/list.component';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent extends BaseComponent {
- 
   constructor(spinner: NgxSpinnerService, httpClientService: HttpClientService) {
-    super(spinner)
-
-    this.showSpinner(SpinnerType.BallAtom,true)
-      
-  }
-
-; 
+    super(spinner) 
+    this.showSpinner(SpinnerType.BallAtom,true) 
+  } 
 
       @ViewChild(ListComponent) ListComponent : ListComponent
-
- 
+       
   createdProduct(createdProduct: Create_Product)
   {
     this.ListComponent.GetProducts() 
