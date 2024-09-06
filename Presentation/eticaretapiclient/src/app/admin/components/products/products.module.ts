@@ -13,9 +13,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon'; 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';  
 import { DeleteButtonComponent } from '../../../WrapperComponents/delete-button/delete-button.component';
- 
-
-
+  
 @NgModule({
   declarations: [
     ProductsComponent,

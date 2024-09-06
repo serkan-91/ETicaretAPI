@@ -6,7 +6,6 @@ declare var alertify: any;
   providedIn: 'root'
 })
 export class AlertifyService {
-
  
   message(message: string, options: Partial<AlertifyOptions> ) {
     alertify.set('notifier', 'delay', options.delay);

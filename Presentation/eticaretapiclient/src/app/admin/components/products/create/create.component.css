@@ -1,14 +1,13 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.product_create_field {
-    margin: 5px 5px;
+.product-create {
+  margin: 5px 5px 5px
 }
 
-.product_create_btn{
-    display:flex;
-    justify-content:center
+.btn {
+  margin: 5px 5px 5px
 }

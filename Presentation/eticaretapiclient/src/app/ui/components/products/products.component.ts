@@ -9,9 +9,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class ProductsComponent extends BaseComponent{
   constructor(spinner: NgxSpinnerService) {
-    super(spinner)
-
-    this.showSpinner(SpinnerType.BallAtom,true)
-
+    super(spinner) 
+    //this.showSpinner(SpinnerType.BallAtom)   
   }
 }

@@ -11,7 +11,7 @@ export class OrdersComponent extends BaseComponent{
 
   constructor(spinner: NgxSpinnerService) {
     super(spinner);
-    this.showSpinner(SpinnerType.BallAtom,true)
+    this.showSpinner(SpinnerType.BallAtom)
 
   }
  

@@ -2,9 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductsComponent } from '../products/products.component';
 import { RouterModule } from '@angular/router';
-
-
-
+ 
 @NgModule({
   declarations: [
     ProductsComponent
@@ -13,7 +11,6 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule.forChild([
       { path: "", component: ProductsComponent },
-
     ])
   ]
 })

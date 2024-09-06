@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomeComponent } from '../home/home.component';
+import { HomeComponent } from './home.component';
 import { RouterModule } from '@angular/router';
 
 
@@ -12,8 +12,7 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule,
     RouterModule.forChild([
-      { path: "", component: HomeComponent },
-
+      { path: "", component: HomeComponent }
     ])
   ]
 })

@@ -1,11 +1,6 @@
-.example-container {
-    width: 98.5%;
-    height: 300pt;
-    margin: 10px;
-    border: 1px solid #555;
-    display: flex
-}
-
-.product-drawer-content{
-    width:100%;
+.product-create {
+  width: 98%;
+  height: 300pt;
+  margin: 10px;
+  border: 1px solid #555;
 }
