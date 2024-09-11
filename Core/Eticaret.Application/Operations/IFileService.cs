@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace EticaretAPI.Application.Services;
+namespace EticaretAPI.Application.Operations;
 
     public interface IFileService
     {

@@ -18,6 +18,10 @@
     <WarningLevel>7</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.7.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.7.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.7.3" />
@@ -26,8 +30,5 @@
     <ProjectReference Include="..\..\Core\Eticaret.Application\EticaretAPI.Application.csproj" />
     <ProjectReference Include="..\..\Insfrastructure\Eticaret.Infrastructure\EticaretAPI.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Insfrastructure\EticaretAPI.Persistence\EticaretAPI.Persistence.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\resource\product-images\" />
   </ItemGroup>
 </Project>

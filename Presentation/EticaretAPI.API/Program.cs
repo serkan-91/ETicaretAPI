@@ -3,12 +3,9 @@ using EticaretAPI.Infrastructure.Filters;
 using EticaretAPI.Persistence;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using EticaretAPI.Application.Services;
-using EticaretAPI.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -19,9 +16,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
     .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
 
-// Swagger hizmetlerini ekleyin
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();  // Bu satýr Swagger hizmetini ekler
+builder.Services.AddSwaggerGen();  
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
@@ -30,7 +26,6 @@ builder.Services.AddValidatorsFromAssemblyContaining<Create_Product_Validator>()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if(app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

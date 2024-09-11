@@ -1,8 +1,8 @@
 ﻿using EticaretAPI.Application.ViewModels.Products; 
 using FluentValidation; 
 
-namespace EticaretAPI.Application.Validators.Products
-{
+namespace EticaretAPI.Application.Validators.Products;
+
     public class Create_Product_Validator : AbstractValidator<VM_Create_Product>
     {
         public Create_Product_Validator()
@@ -31,4 +31,3 @@ namespace EticaretAPI.Application.Validators.Products
 
         }
     }
-}
