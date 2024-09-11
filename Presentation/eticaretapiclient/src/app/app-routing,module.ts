@@ -15,16 +15,16 @@ const routes: Routes = [
         path: "customers",
         loadChildren: () =>
           import("./admin/components/customers/customers.module").
-          then(module=>module.CustomersModule)
+            then(module => module.CustomersModule)
       },
       {
-        path: "products", component: ProductsComponent, 
+        path: "products", component: ProductsComponent,
         loadChildren: () =>
           import("./admin/components/products/products.module").
-          then(module=>module.ProductsModule)
-      }, 
+            then(module => module.ProductsModule)
+      },
       {
-        path: "orders", component: OrdersComponent, 
+        path: "orders", component: OrdersComponent,
         loadChildren: () =>
           import("./admin/components/orders/orders.module").
             then(module => module.OrdersModule)
@@ -36,7 +36,7 @@ const routes: Routes = [
     path: "basket",
     loadChildren: () => import("./ui/components/baskets/baskets.module").
       then(module => module.BasketsModule)
-  }, 
+  },
   {
     path: "products",
     loadChildren: () => import("./ui/components/products/products.module").
@@ -45,7 +45,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)]  ,
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

@@ -1,59 +1,110 @@
-import {   ApplicationRef,      Directive, ElementRef, Injectable, Injector, Input, Renderer2, ViewChild, ViewContainerRef  } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Renderer2, ViewChild, inject } from '@angular/core'; 
+import { DeleteDialogComponent, DeleteState } from '../../dialogs/delete-dialog/delete-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 import { HttpClientService } from '../../services/common/http-client.service';
-import { FaIconService } from '../../services/common/fa-Icon.service'; 
-import { MatButton,   MatButtonModule, MatFabButton } from '@angular/material/button';
+import { AlertifyService, MessageType, Position } from '../../services/admin/alertify.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { BaseComponent, SpinnerType } from '../../base/base.component';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { DialogService } from '../../services/common/dialog.service';
 
 @Directive({
-  selector: '[appDelete]'
+  selector: '[appDelete]',
 })
- 
-export class DeleteDirective   {
+
+export class DeleteDirective extends BaseComponent {
   @Input() color: string = 'primary'; // Varsayılan renk
+  readonly dialog = inject(MatDialog);
+
   constructor(
-    private vcr: ViewContainerRef,
-    private elr: ElementRef,
-    private renderer: Renderer2, 
-    private httpClientService: HttpClientService,
-    private faIconService: FaIconService, 
-    private injector: Injector,
-    private appRef: ApplicationRef, 
-  ) { }
+    private _element: ElementRef,
+    private _httpClientService: HttpClientService,
+    private _renderer: Renderer2,
+    private _alertify: AlertifyService,
+    private _dialogService: DialogService,
+    _spinmner: NgxSpinnerService
+
+  ) {
+    super(_spinmner);
+    const img = _renderer.createElement("img");
+    img.setAttribute("src", "/assets/delete.png");
+    img.setAttribute("style", "cursor: pointer; transition: opacity 0.3s; opacity: 0.6;"); // Geçiş efekti eklendi
+    img.with = 25;
+    img.height = 25;
+    _renderer.appendChild(_element.nativeElement, img)
+  }
+  @Input() id: string;
+  @Input() controller: string;
+  @Input() action: string;
+  @Output() callback: EventEmitter<any> = new EventEmitter();
+
+  @HostListener('click')
+  async onClick() {
+    this._dialogService.openDialog({
+      componentType: DeleteDialogComponent,
+      data: DeleteState.Yes,
+      afterClosed: () => {
+        this._httpClientService.delete({
+          controller: this.controller,
+          action: this.action
+        }, this.id)
+          .subscribe({
+            next: () => {
+              this.callback.emit();
+              this._alertify.message(
+                "Product has been deleted successfully", {
+                dismissOthers: true,
+                messageType: MessageType.Success,
+                position: Position.TopRight
+              });
+            },
+            error: (errorResponse: HttpErrorResponse) => {
+              this._alertify.message(
+                "An error occurred while attempting to delete the product", {
+                dismissOthers: true,
+                messageType: MessageType.Error,
+                position: Position.TopCenter
+              });
+              console.error(errorResponse);
+              this.hideSpinner(SpinnerType.BallAtom);
+            }
+          })
+      }
+
+    });
+    
+  }
+
   @ViewChild('matButton', { static: true, read: ElementRef }) matdButton: ElementRef;
 
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, afterClosed: any): void {
+    const dialogRef = this.dialog.open(DeleteDialogComponent,
+      {
+        width: '250px',
+        enterAnimationDuration: enterAnimationDuration,
+        exitAnimationDuration: exitAnimationDuration,
+        data: DeleteState.Yes
+      });
 
-  ngOnInit() {
-     
-    //// MatButton bileşeni oluşturun
+    dialogRef.afterClosed()
+      .subscribe((result: DeleteState) => {
+        if (result == DeleteState.Yes) {
+          afterClosed();
+        }
+      })
+  }
+  @HostListener('mouseenter') onMouseEnter() {
+    this.setOpacity(1);
+  }
 
-    const component = this.vcr.createComponent(MatButton["button[mat-raised-button"])
-   
-  
+  @HostListener('mouseleave') onMouseLeave() {
+    this.setOpacity(0.6);
+  }
 
-    //const a = matbutton.injector.get.prototype
-
-    //var deletebtn = matbutton.location.nativeElement
-
-
-    //// MatButton bileşenini DOM'a ekleyin
-    //this.renderer.appendChild(this.el.nativeElement, matbutton.location.nativeElement);
-
-
-    //// Diğer özellikleri ayarlayabilirsiniz
-    //const matButtonInstance = matbutton.instance;
-
-    //matButtonInstance.color = 'warn';
-    //matButtonInstance._elementRef.nativeElement
-    //// Düğme metnini ayarlayın
-    //matButtonInstance._elementRef.nativeElement.textContent = 'tesxt';
-
-    //const factory = this.componentFactoryResolver.resolveComponentFactory(MatButton);
-    //const componentRef = this.vcr.createComponent(factory);
-
-    //// Add 'mat-raised-button' attribute
-    //const el: HTMLElement = componentRef.location.nativeElement;
-    //this.renderer.setAttribute(el, 'mat-raised-button', '');
-
-    //// Set other properties
-    //componentRef.instance.color = 'accent';
+  private setOpacity(opacity: number) {
+    const img = this._element.nativeElement.querySelector('img');
+    if (img) {
+      this._renderer.setStyle(img, 'opacity', opacity);
+    }
   }
 }

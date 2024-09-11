@@ -1,13 +1,12 @@
 :host {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: column; 
 }
 
 .product-create {
-  margin: 5px 5px 5px
+  margin: 8px 10%; 
 }
 
 .btn {
-  margin: 5px 5px 5px
+  margin: 10px 20%
 }

@@ -3,7 +3,7 @@
 html, body {
   height: 99%;
   width: 99%;
-  font-family: 'GRoboto'!important;
+  font-family: 'GRoboto' !important;
   font-size: large
 }
 
@@ -12,5 +12,11 @@ html, body {
   src: url('app/fonts/Roboto-Regular.ttf');
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

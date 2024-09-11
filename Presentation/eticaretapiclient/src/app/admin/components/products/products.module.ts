@@ -1,38 +1,49 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductsComponent } from './products.component';
 import { RouterModule } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
+
+import { ProductsComponent } from './products.component';
 import { CreateComponent } from './create/create.component';
-import { ListComponent } from './list/list.component';
+import { ListComponent } from './list/list.component'; 
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import {   DialogsModule } from '../../../dialogs/dialogs.module';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator'; 
-import { MatIconModule } from '@angular/material/icon'; 
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';  
+import { FileUploadComponent } from '../../../services/common/file-upload/file-upload.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DeleteButtonComponent } from '../../../WrapperComponents/delete-button/delete-button.component';
-  
+import { DeleteDirective } from '../../../directives/admin/delete.directive';
+import { NgModule } from '@angular/core';
+
 @NgModule({
   declarations: [
     ProductsComponent,
     CreateComponent,
-    ListComponent, DeleteButtonComponent
+    ListComponent, CreateComponent, 
+    DeleteDirective,
+    DeleteButtonComponent  
   ],
   imports: [
-    CommonModule,
     RouterModule.forChild([
       { path: "", component: ProductsComponent },
-
     ]),
+    CommonModule,
+    MatButtonModule,
     MatSidenavModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatTableModule, MatPaginatorModule,
+    MatPaginatorModule,
+    MatIconModule, 
+    MatTableModule,
+    DialogsModule,
     FontAwesomeModule,
-    MatIconModule
+    MatPaginatorModule, 
+    FileUploadComponent
+
   ]
 })
-export class ProductsModule { }
+export class ProductsModule {
+}

@@ -8,8 +8,6 @@ import { AlertifyService, MessageType, Position } from '../../../../services/adm
 import { MatPaginator } from '@angular/material/paginator';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
 
- 
-
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -17,7 +15,6 @@ import { FaIconService } from '../../../../services/common/fa-Icon.service';
 })
 
 export class ListComponent extends BaseComponent implements OnInit {
-   
   constructor(
     spinner: NgxSpinnerService,
     private productService: ProductService,
@@ -29,51 +26,44 @@ export class ListComponent extends BaseComponent implements OnInit {
   faXmark = this.faIconService.faXmark;
   faPen = this.faIconService.faPen;
 
-  //all_Products: ProductsWithTotalCount = { products: [], totalCount: 0 };
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate'];
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'edit', 'delete'];
   dataSource: MatTableDataSource<List_Product> = null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   async ngOnInit() {
-    await this.GetProducts(); 
+    this.GetProducts();
   }
-  async GetProducts() {
-    this.showSpinner(SpinnerType.BallAtom);
-    const allProducts: { totalProductCount: number; products: List_Product[] } =
-      await this.productService.read(
-        this.paginator ? this.paginator.pageIndex : 0, this.paginator ? this.paginator.pageSize : 5, () =>
-        this.hideSpinner(SpinnerType.BallAtom),
-        errorMessage => this.alertifyService.message(errorMessage,
-          {
-      dismissOthers: true,
-      messageType: MessageType.Error,
-      position: Position.TopRight
-          }))
-    this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
-    this.paginator.length = allProducts.totalProductCount;
+  GetProducts() {
+    this.hideSpinner(SpinnerType.BallAtom)
+    this.productService.read(
+      this.paginator ? this.paginator.pageIndex : 0,
+      this.paginator ? this.paginator.pageSize : 5,
+      () => this.hideSpinner(SpinnerType.BallAtom),
+      errorMessage => this.alertifyService.message(errorMessage, {
+        dismissOthers: true,
+        messageType: MessageType.Error,
+        position: Position.TopRight
+      })
+    ).subscribe({
+      next: (allProducts: { totalProductCount: number; products: List_Product[] }) => {
+        this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
+        this.paginator.length = allProducts.totalProductCount;
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
-  async pageChanged() 
-  {
-    await this.GetProducts()
-  } 
+  delete(event: { srcElement: HTMLImageElement; }) {
+    $(event.srcElement.parentElement.parentElement.parentElement).fadeOut(2000)
+  }
 
+  onDeleteClick() {
+    this.GetProducts();
+  }
 
-  //delete(id, event) {
-  //  alert(id)
-  //  const img: HTMLImageElement = event.srcElement;
-  //  $(img.parentElement.parentElement.parentElement).fadeOut(2000)
-  //}
-
-
-   
-  //async ngOnInit() {
-  //      await this.GetProducts();
-  //    }
-
-  //onDeleteClick() {
-  //      this.GetProducts();
-  //    }
+  pageChanged() {
+    this.GetProducts();
+  }
 }
-
-

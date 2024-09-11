@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BasketsComponent } from './baskets.component';
 
-
-
 @NgModule({
   declarations: [],
   imports: [

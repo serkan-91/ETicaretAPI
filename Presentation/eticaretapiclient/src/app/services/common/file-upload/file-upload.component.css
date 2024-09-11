@@ -1,0 +1,21 @@
+.center {
+  text-align: center;
+  padding: 20px;
+}
+
+.upload-table {
+  margin-top: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+  .table thead tr {
+    background-color: #f8f9fa;
+  }
+
+.upload-name-style {
+  background-color: #e9ecef;
+}

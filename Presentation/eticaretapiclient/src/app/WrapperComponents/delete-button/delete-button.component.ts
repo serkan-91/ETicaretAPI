@@ -1,52 +1,49 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
-import { FaIconService } from '../../services/common/fa-Icon.service';
 import { ProductService } from '../../services/common/models/product.service';
 import { BaseComponent, SpinnerType } from '../../base/base.component';
-import {  NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { FaIconService } from '../../services/common/fa-Icon.service';
 
-declare var $: any
+declare let $: any
+
 @Component({
-  selector: 'app-delete-button',
-  template: `
- <button mat-raised-button color="warn" (click)="onDeleteClick()" >
+    selector: 'app-delete-button',
+    template: `
+ <button mat-icon-button color="warn" (click)="onDeleteClick()" >
   <mat-icon class="noTextMatIcon">
     <fa-icon [icon]="faXmark"></fa-icon>
   </mat-icon>
 </button>
-
 `,
-  styleUrls: ['./delete-button.component.css'],
-   
+    styleUrls: ['./delete-button.component.css'],
 })
 
 export class DeleteButtonComponent extends BaseComponent {
- 
+    constructor(
+        private faIconService: FaIconService,
+        private element: ElementRef,
+        private productService: ProductService,
+        spinner: NgxSpinnerService
+    ) {
+        super(spinner);
+    }
+    faXmark = this.faIconService.faXmark;
 
-  constructor(
-    private faIconService: FaIconService,
-    private element: ElementRef,
-    private productService: ProductService,
-    spinner : NgxSpinnerService
-  ) {
-    super(spinner);
-  }
-  faXmark = this.faIconService.faXmark;
+    @Input() id: string;
+    @Output() callback: EventEmitter<any> = new EventEmitter();
 
-  @Input() id: string;
-  @Output() callback: EventEmitter<any> = new EventEmitter();
+    async onDeleteClick() {
+        this.showSpinner(SpinnerType.BallAtom)
+        const td: HTMLImageElement = this.element.nativeElement.parentElement
+        const tr = td.parentElement
 
-  async onDeleteClick() {
-    this.showSpinner(SpinnerType.BallAtom)
-     const td: HTMLImageElement = this.element.nativeElement.parentElement
-     const tr = td.parentElement
-
-     //console.log(td)
-     await this.productService.delete(td.id);
-
-     $(tr).fadeOut(2000, () => {
-       this.callback.emit();
-     })
-     
-     
-  }
+        //console.log(td)
+        this.productService.delete(
+            {
+                id: td.id,
+                successCallBack: () => $(tr).fadeOut(2000, () => {
+                    this.callback.emit();
+                }) /*, errorCallBack: () => { }*/
+            });
+    }
 }

@@ -7,10 +7,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './baskets.component.html',
   styleUrls: ['./baskets.component.css']
 })
-export class BasketsComponent extends BaseComponent implements OnInit{
-
+export class BasketsComponent extends BaseComponent implements OnInit {
   constructor(spinner: NgxSpinnerService) {
-    super(spinner) 
+    super(spinner)
   }
   ngOnInit(): void {
   }

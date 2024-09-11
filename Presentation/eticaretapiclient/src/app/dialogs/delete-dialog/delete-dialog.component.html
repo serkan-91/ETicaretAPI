@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Warning!?</h2>
+<mat-dialog-content>
+  Would you like to delete this product  ?
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()" mat-dialog-close>İptal</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Evet</button>
+</mat-dialog-actions> 

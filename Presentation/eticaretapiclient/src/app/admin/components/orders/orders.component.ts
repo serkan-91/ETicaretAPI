@@ -7,14 +7,9 @@ import { BaseComponent, SpinnerType } from '../../../base/base.component';
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css']
 })
-export class OrdersComponent extends BaseComponent{
-
+export class OrdersComponent extends BaseComponent {
   constructor(spinner: NgxSpinnerService) {
     super(spinner);
     this.showSpinner(SpinnerType.BallAtom)
-
   }
- 
-   
-
 }

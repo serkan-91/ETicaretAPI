@@ -1,26 +1,30 @@
-import { EventEmitter } from '@angular/core';
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, Output, EventEmitter, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent, SpinnerType } from '../../../../base/base.component';
 import { Create_Product } from '../../../../contracts/create_product';
 import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
-import { ProductService } from '../../../../services/common/models/product.service'; 
+import { ProductService } from '../../../../services/common/models/product.service';
+import { FileUploadOptions } from '../../../../services/common/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss']
+  styleUrls: ['./create.component.scss' ]  
 })
-export class CreateComponent extends BaseComponent implements OnInit {
-
+export class CreateComponent extends BaseComponent {
   constructor(spiner: NgxSpinnerService, private productService: ProductService, private alertify: AlertifyService) {
     super(spiner)
   }
 
-  ngOnInit(): void {
-  }
-
   @Output() createdProduct: EventEmitter<Create_Product> = new EventEmitter();
+
+  @Output() fileUploadOptions: Partial<FileUploadOptions> = {
+    action: "upload",
+    controller: "products",
+    explanation: "The pictures drag and drop or choose",
+    isAdminPage: true,
+    accept: ".png, .jpg, .jpeg"
+  }
 
   create(name: HTMLInputElement, stock: HTMLInputElement, price: HTMLInputElement) {
     this.showSpinner(SpinnerType.BallAtom); // İşlem başladığında spinner göster

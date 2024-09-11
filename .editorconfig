@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# S6968: Actions that return a value should be annotated with ProducesResponseTypeAttribute containing the return type
+dotnet_diagnostic.S6968.severity = none
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = none
+
+# Default severity for analyzer diagnostics with category 'Major Code Smell'
+dotnet_analyzer_diagnostic.category-Major Code Smell.severity = silent
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = silent

@@ -1,18 +1,17 @@
 table {
-    width: 100%;
+  width: 100%;
 }
 
 :host {
-    width: 100%
+  width: 100%
 }
 
 .mdc-button {
-    min-width: auto
+  min-width: auto
 }
 
 .noTextMatIcon {
-    margin-right: 0 !important;
-    width: 24px!important;
-    font-size:20px
+  margin-right: 0 !important;
+  width: 24px !important;
+  font-size: 20px
 }
- 

@@ -10,7 +10,7 @@ namespace EticaretAPI.Application.Helper
         {
             try
             {
-                action();  // Gönderilen metodu çalıştır
+                action();   
             }
             catch(ArgumentNullException ex)
             {

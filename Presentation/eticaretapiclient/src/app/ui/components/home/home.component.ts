@@ -8,13 +8,11 @@ import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent extends BaseComponent implements OnInit {
-
   constructor(spinner: NgxSpinnerService) {
     super(spinner)
   }
 
   ngOnInit(): void {
-    /*  this.showSpinner(SpinnerType.BallAtom);*/ 
+    /*  this.showSpinner(SpinnerType.BallAtom);*/
   }
-
 }

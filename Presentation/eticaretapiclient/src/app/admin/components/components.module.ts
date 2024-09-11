@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductsModule } from './products/products.module';
 import { CustomersModule } from './customers/customers.module';
 import { DashboardModule } from './dashboard/dashboard.module';
-import { OrdersModule } from './orders/orders.module';
-import { MatPaginatorModule } from '@angular/material/paginator'; 
+import { OrdersModule } from './orders/orders.module';  
 
 @NgModule({
-  declarations: [  ],
+  declarations: [ 
+  ],
   imports: [
     CommonModule,
     ProductsModule,
     OrdersModule,
     CustomersModule,
-    DashboardModule,
-    MatPaginatorModule
-  ]
+    DashboardModule
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]   
 })
 export class ComponentsModule { }

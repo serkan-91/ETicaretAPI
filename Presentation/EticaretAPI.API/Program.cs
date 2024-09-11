@@ -3,11 +3,14 @@ using EticaretAPI.Infrastructure.Filters;
 using EticaretAPI.Persistence;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using EticaretAPI.Application.Services;
+using EticaretAPI.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddPersistenceServices();
+builder.Services.AddInfrastructureServices();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
     policy.WithOrigins("http://localhost:4200" , "https://localhost:4200")
           .AllowAnyHeader()
