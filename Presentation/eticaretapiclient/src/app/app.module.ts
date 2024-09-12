@@ -32,7 +32,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   ],
   providers: [
     {
-      provide: "baseUrl", useValue: "https://localhost:44303/api", multi: true
+      provide: "baseUrl", useValue: "https://localhost:7116/api", multi: true
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync()

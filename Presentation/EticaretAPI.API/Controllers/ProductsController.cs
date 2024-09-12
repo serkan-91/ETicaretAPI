@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using EticaretAPI.Application.Operations;
 using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;
 using EticaretAPI.Application.ViewModels;
@@ -15,7 +14,6 @@ namespace EticaretAPI.API.Controllers
 	public class ProductsController(
 		IProductWriteRepository _productWriteRepository,
 		IProductReadRepository _productReadRepository,
-		IFileService _fileService,
 		IFileReadRepository _fileReadRepository,
 		IFileWriteRepository _fileWriteRepository,
 		IProductImageFileReadRepository _productImageFileReadRepository,
@@ -87,11 +85,8 @@ namespace EticaretAPI.API.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Upload()
 		{
-			var result = await _fileService.UploadFilesAsync(
-				"resource/product-images",
-				Request.Form.Files
-			);
-			return Ok(result);
+			 
+			return Ok();
 		}
 
 		[HttpDelete("{id}")]

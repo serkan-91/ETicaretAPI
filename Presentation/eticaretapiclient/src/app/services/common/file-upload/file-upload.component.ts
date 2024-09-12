@@ -31,71 +31,102 @@ export class FileUploadComponent {
     private _spinner: NgxSpinnerService) { }
 
   public files: NgxFileDropEntry[] = [];
+  public errorMessage: string = '';
+  private maxFileSize = 20 * 1024 * 1024; // 20 MB
 
   @Input() options: Partial<FileUploadOptions>;
 
-  public selectedFiles(files: NgxFileDropEntry[]) {
-    this.files = files;
-    const fileData: FormData = new FormData();
-    for (const file of files) {
-      (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
-        fileData.append(_file.name, _file, file.relativePath);
-      });
-    }
-    this._dialogService.openDialog({
-      componentType: FileUploadDialogComponent,
-      data: FileUploadState.Yes,
-      afterClosed: () => {
-        this._spinner.show(SpinnerType.BallAtom)
-        this._httpClientService.post({
-          controller: this.options.controller,
-          action: this.options.action,
-          queryString: this.options.queryString,
-          headers: new HttpHeaders({ "responseType": "blob" })
-        }, fileData).
-          subscribe({
-            next: (response: any) => {
-              const message: string = "Dosyalar başarıyla yüklenmiştir.";
+public selectedFiles(files: NgxFileDropEntry[]) {
+  this.files = files;
+  const fileData: FormData = new FormData();
 
-              this._spinner.hide(SpinnerType.BallAtom);
-              if (this.options.isAdminPage) {
-                this._alertifyService.message(message,
-                  {
-                    dismissOthers: true,
-                    messageType: MessageType.Success,
-                    position: Position.TopRight
-                  })
-              } else {
-                this._toastrService.message(message, "Başarılı.", {
-                  messageType: ToastrMessageType.Success,
-                  position: ToastrPosition.TopRight
-                })
+  let hasFileSizeError = false;
 
-              }
-            },
-            error: (error: any) => {
-              const message: string = "Dosyalar yüklenirken beklenmeyen bir hatayla karşılaşılmıştır.";
-
-              this._spinner.hide(SpinnerType.BallAtom)
-              if (this.options.isAdminPage) {
-                this._alertifyService.message(message,
-                  {
-                    dismissOthers: true,
-                    messageType: MessageType.Error,
-                    position: Position.TopRight
-                  })
-              } else {
-                this._toastrService.message(message, "Başarsız.", {
-                  messageType: ToastrMessageType.Error,
-                  position: ToastrPosition.TopRight
-                })
-              }
-            }
-
+  // Dosya boyutlarını kontrol et
+  for (const file of files) {
+    (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
+      if (_file.size > this.maxFileSize) {
+        // Eğer dosya boyutu sınırdan büyükse hata mesajı göster
+        this.errorMessage = `${_file.name} cannot be bigger than 20 MB.`;
+        hasFileSizeError = true;
+        this._spinner.hide(SpinnerType.BallAtom); // Spinner kapatılıyor
+        const message: string = `${_file.name} cannot be bigger than 20 MB `;
+        // Kullanıcı admin ise Alertify, değilse Toastr kullan
+        if (this.options.isAdminPage) {
+          this._alertifyService.message(message, {
+            dismissOthers: true,
+            messageType: MessageType.Error,
+            position: Position.TopRight
           });
+        } else {
+          this._toastrService.message(message, "Error", {
+            messageType: ToastrMessageType.Error,
+            position: ToastrPosition.TopRight
+          });
+        }
+      } else {
+        // Dosya boyutu uygun, FormData'ya ekle
+        fileData.append(_file.name, _file, file.relativePath);
+        this.errorMessage = ''; // Hata mesajını temizle
       }
     });
   }
+
+  // Eğer dosya boyutu hatası varsa dialog açılmasın
+  if (hasFileSizeError) {
+    return; // İşlemi iptal et
+  }
+
+  // Dosya boyutları uygunsa dialog aç ve dosya yükle
+  this._dialogService.openDialog({
+    componentType: FileUploadDialogComponent,
+    data: FileUploadState.Yes,
+    afterClosed: () => {
+      this._spinner.show(SpinnerType.BallAtom);
+      this._httpClientService.post({
+        controller: this.options.controller,
+        action: this.options.action,
+        queryString: this.options.queryString,
+        headers: new HttpHeaders({ "responseType": "blob" })
+      }, fileData).subscribe({
+        next: () => {
+          const message: string = "Files have been uploaded successfully.";
+          this._spinner.hide(SpinnerType.BallAtom);
+
+          if (this.options.isAdminPage) {
+            this._alertifyService.message(message, {
+              dismissOthers: true,
+              messageType: MessageType.Success,
+              position: Position.TopRight
+            });
+          } else {
+            this._toastrService.message(message, "Başarılı", {
+              messageType: ToastrMessageType.Success,
+              position: ToastrPosition.TopRight
+            });
+          }
+        },
+        error: () => {
+          const message: string = "An unexpected error was encountered while uploading files.";
+          this._spinner.hide(SpinnerType.BallAtom);
+
+          if (this.options.isAdminPage) {
+            this._alertifyService.message(message, {
+              dismissOthers: true,
+              messageType: MessageType.Error,
+              position: Position.TopRight
+            });
+          } else {
+            this._toastrService.message(message, "Unsuccessful", {
+              messageType: ToastrMessageType.Error,
+              position: ToastrPosition.TopRight
+            });
+          }
+        }
+      });
+    }
+  });
+}
 }
 
 

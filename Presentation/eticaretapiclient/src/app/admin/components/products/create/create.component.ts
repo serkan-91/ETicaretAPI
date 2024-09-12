@@ -23,7 +23,7 @@ export class CreateComponent extends BaseComponent {
     controller: "products",
     explanation: "The pictures drag and drop or choose",
     isAdminPage: true,
-    accept: ".png, .jpg, .jpeg"
+    accept: ".png, .jpg, .jpeg, .pdf, .mp4"
   }
 
   create(name: HTMLInputElement, stock: HTMLInputElement, price: HTMLInputElement) {

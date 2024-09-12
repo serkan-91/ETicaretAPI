@@ -19,8 +19,9 @@ public static class ServiceRegistration
 		services.AddScoped<IFileWriteRepository, FileWriteRepository>();
 		services.AddScoped<IFileReadRepository , FileReadRepository>();
 		services.AddScoped<IProductImageFileReadRepository , ProductImageFileReadRepository>();
+		services.AddScoped<IProductImageFileWriteRepository , ProductImageFileWriteRepository>();
 		services.AddScoped<IInvoiceFileReadRepository , InvoiceFileReadRepository>();
 		services.AddScoped<IInvoiceFileWriteRepository , InvoiceFileWriteRepository>();
 
 		}
-}
+	}
