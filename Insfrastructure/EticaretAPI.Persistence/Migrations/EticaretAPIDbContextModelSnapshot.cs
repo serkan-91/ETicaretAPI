@@ -62,6 +62,9 @@ namespace EticaretAPI.Persistence.Migrations
                     b.Property<string>("Path")
                         .HasColumnType("text");
 
+                    b.Property<int>("StorageTypes")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Files");
@@ -140,6 +143,21 @@ namespace EticaretAPI.Persistence.Migrations
                     b.ToTable("OrderProduct");
                 });
 
+            modelBuilder.Entity("ProductProductImageFile", b =>
+                {
+                    b.Property<Guid>("ProductImageFilesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ProductImageFilesId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("ProductProductImageFile");
+                });
+
             modelBuilder.Entity("EticaretAPI.Domain.Entities.InvoiceImageFile", b =>
                 {
                     b.HasBaseType("EticaretAPI.Domain.Entities.File");
@@ -174,6 +192,21 @@ namespace EticaretAPI.Persistence.Migrations
                     b.HasOne("EticaretAPI.Domain.Entities.Order", null)
                         .WithMany()
                         .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EticaretAPI.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProductProductImageFile", b =>
+                {
+                    b.HasOne("EticaretAPI.Domain.Entities.ProductImageFile", null)
+                        .WithMany()
+                        .HasForeignKey("ProductImageFilesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

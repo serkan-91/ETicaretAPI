@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static EticaretAPI.Domain.Entities.File;
 
-namespace EticaretAPI.Application.Abstractions.Storage
+namespace EticaretAPI.Application.Abstractions.Storage;
+
+public interface IStorageService : IStorage
 {
-	public interface IStorageService : IStorage { }
+	StorageType StorageServiceType { get; }
 }

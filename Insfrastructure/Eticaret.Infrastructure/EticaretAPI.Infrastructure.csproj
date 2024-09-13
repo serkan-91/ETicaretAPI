@@ -6,10 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Eticaret.Application\EticaretAPI.Application.csproj" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\Storage\AWS\" />
-    <Folder Include="Services\Storage\Azure\" />
+    <ProjectReference Include="..\..\Core\Eticaret.Application\EticaretAPI.Application.csproj" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 using EticaretAPI.Application.Validators.Products;
 using EticaretAPI.Infrastructure;
 using EticaretAPI.Infrastructure.Filters;
-using EticaretAPI.Infrastructure.Services.Storage.Local;
+using EticaretAPI.Infrastructure.Services.Storages.Local;
 using EticaretAPI.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -17,22 +17,21 @@ builder.Configuration
 	.AddEnvironmentVariables();
 
 // IConfiguration'ý Configurations sýnýfýna ayarla
-Configurations.SetConfiguration(builder.Configuration);
+EticaretAPI.Infrastructure.Configurations.SetConfiguration(builder.Configuration);
+EticaretAPI.Persistence.Configurations.SetConfiguration(builder.Configuration);
 // Add configuration sources
-
-
 
 // Build the app and continue with setup...
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
 
 //builder.Services.AddStorage<LocalStorage>();
-builder.Services.AddStorageService(StorageType.Local);
+builder.Services.AddStorageService(StorageType.Azure);
 
 builder.Services.AddCors(options =>
 	options.AddDefaultPolicy(policy =>
 		policy
-			.WithOrigins("http://localhost:4200", "https://localhost:4200")
+			.WithOrigins("http://localhost:4200" , "https://localhost:4200")
 			.AllowAnyHeader()
 			.AllowAnyMethod()
 	)
@@ -51,27 +50,27 @@ builder.Services.AddValidatorsFromAssemblyContaining<Create_Product_Validator>()
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+if(app.Environment.IsDevelopment())
+	{
 	app.UseDeveloperExceptionPage();
 	app.UseSwagger();
 	app.UseSwaggerUI(c =>
 	{
-		c.SwaggerEndpoint("/swagger/v1/swagger.json", "EticaretAPI v1");
+		c.SwaggerEndpoint("/swagger/v1/swagger.json" , "EticaretAPI v1");
 		c.RoutePrefix = string.Empty;
 	});
-}
+	}
 else
-{
+	{
 	app.UseHsts();
-}
+	}
 
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.MapControllerRoute(name: "default", pattern: "{controller}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default" , pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 

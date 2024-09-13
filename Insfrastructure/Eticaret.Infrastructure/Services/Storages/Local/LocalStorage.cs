@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EticaretAPI.Application.Abstractions.Storage.Local;
+﻿using EticaretAPI.Application.Abstractions.Storage.Local;
 using EticaretAPI.Application.Helper;
-using EticaretAPI.Infrastructure.Operations;
 
-namespace EticaretAPI.Infrastructure.Services.Storage.Local;
+namespace EticaretAPI.Infrastructure.Services.Storages.Local;
 
-public class LocalStorage(IWebHostEnvironment _webHostEnvironment) : ILocalStorage
+public class LocalStorage(IWebHostEnvironment _webHostEnvironment) : Storage, ILocalStorage
 {
+
 	public List<string> GetFiles(string path)
 	{
 		string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, path);
@@ -39,19 +34,21 @@ public class LocalStorage(IWebHostEnvironment _webHostEnvironment) : ILocalStora
 
 				foreach (IFormFile file in files)
 				{
-					string filePath = Path.Combine(uploadPath, file.FileName);
+					var fileNewName  = await FileRenameAsync(uploadPath,file.FileName );
+
+					string filePath = Path.Combine(uploadPath, fileNewName);
 					bool copyResult = await CopyFileAsync(filePath, file);
 					if (!copyResult)
 						throw new Exception("File Upload Error");
 
-					datas.Add((file.FileName, path));
+					datas.Add((fileNewName, path));
 				}
 				return datas;
 			},
 			"File Upload Operation"
 		);
 
-	public bool HasFile(string path, string fileName) =>
+	protected  override bool HasFile(string path, string fileName) =>
 		File.Exists(Path.Combine(_webHostEnvironment.WebRootPath, path, fileName));
 
 	public async Task<bool> DeleteFileAsync(string path, string fileName) =>
@@ -87,6 +84,4 @@ public class LocalStorage(IWebHostEnvironment _webHostEnvironment) : ILocalStora
 
 			return true;
 		});
-
- 
-	}
+}

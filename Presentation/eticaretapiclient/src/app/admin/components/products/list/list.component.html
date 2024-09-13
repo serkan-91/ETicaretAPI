@@ -25,16 +25,30 @@
             <th mat-header-cell *matHeaderCellDef> Updated Date </th>
             <td mat-cell *matCellDef="let element"> {{element.updatedDate}} </td>
         </ng-container>
+            
            
+        <ng-container matColumnDef="photos" >
+            <th mat-header-cell *matHeaderCellDef  >  </th>
+            <td
+            mat-cell
+            *matCellDef="let element"
+            (click)="addProductImages(element.id)"
+             >
+            <button mat-icon-button  style=" background: aqua; color: white ;" >
+  <mat-icon class="noTextMatIcon">
+      <fa-icon [icon]="faImage"></fa-icon>
+  </mat-icon>
+</button>
+            </td>
+        </ng-container> 
         <ng-container matColumnDef="edit">
             <th mat-header-cell *matHeaderCellDef> </th>
-            <td mat-cell  *matCellDef="let element" width="15" height="15">
-
-                <button mat-icon-button style=" background: #25D366; color: whitesmoke;">
+            <td mat-cell
+            *matCellDef="let element"  >
+                            <button mat-icon-button style=" background: #25D366; color: whitesmoke;">
                     <mat-icon class="noTextMatIcon"> 
                         <fa-icon [icon]="faPen"></fa-icon>
                     </mat-icon>
-
                 </button>
             </td>
         </ng-container>

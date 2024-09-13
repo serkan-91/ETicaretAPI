@@ -7,6 +7,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
+import { DialogService } from '../../../../services/common/dialog.service';
+import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
+import { HttpClientService } from '../../../../services/common/http-client.service';
 
 @Component({
   selector: 'app-list',
@@ -16,17 +19,19 @@ import { FaIconService } from '../../../../services/common/fa-Icon.service';
 
 export class ListComponent extends BaseComponent implements OnInit {
   constructor(
-    spinner: NgxSpinnerService,
+    _spinner: NgxSpinnerService,
     private productService: ProductService,
     private alertifyService: AlertifyService,
-    private faIconService: FaIconService
+    private faIconService: FaIconService,
+    private _dialogService: DialogService 
   ) {
-    super(spinner);
+    super(_spinner);
   }
   faXmark = this.faIconService.faXmark;
   faPen = this.faIconService.faPen;
+  faImage = this.faIconService.faImage;
 
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'edit', 'delete'];
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'photos', 'edit', 'delete'];
   dataSource: MatTableDataSource<List_Product> = null;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -51,6 +56,18 @@ export class ListComponent extends BaseComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
+      }
+    });
+  }
+
+  addProductImages(id: string) {
+    this._dialogService.openDialog({
+      componentType: SelectProductImageDialogComponent,
+      enterAnimationDuration: 600,
+      exitAnimationDuration: 600,
+      data: id,
+      options: {
+        width: '1400px',
       }
     });
   }
