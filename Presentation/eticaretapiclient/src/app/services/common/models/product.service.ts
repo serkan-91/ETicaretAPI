@@ -6,84 +6,97 @@ import { List_Product } from '../../../contracts/list_product';
 import { BaseComponent } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
-
+import { List_Product_Image } from '../../../contracts/list_product_image';
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ProductService extends BaseComponent {
-    constructor(
-        _spinner: NgxSpinnerService,
-        private httpClientService: HttpClientService
-    ) {
-        super(_spinner);
-    }
+  constructor(
+    _spinner: NgxSpinnerService,
+    private httpClientService: HttpClientService
+  ) {
+    super(_spinner);
+  }
 
-    create(
-        product: Create_Product,
-        successCallBack?: () => void,
-        errorCallBack?: (errorMessage: string) => void
-    ) {
-        this.httpClientService.post({
-            controller: "products",
-            action: "CreateProduct"
-        }, product)
-            .subscribe({
-                next: () => {
-                    if (successCallBack) {
-                        successCallBack();
-                    }
-                },
-                error: (error) => {
-                    const _error = error.error as Array<{ key: string, value: Array<string> }>;
-                    let message = "";
-                    if (_error && Array.isArray(_error)) {
-                        _error.forEach((_v) => {
-                            _v.value.forEach((v) => {
-                                message += `${v}<br>`;
-                            });
-                        });
-                    } else {
-                        message = error.message;
-                    }
-
-                    if (errorCallBack) {
-                        errorCallBack(message);
-                    }
-                }
+  create(
+    product: Create_Product,
+    successCallBack?: () => void,
+    errorCallBack?: (errorMessage: string) => void
+  ) {
+    this.httpClientService.post({
+      controller: "products",
+      action: "CreateProduct"
+    }, product)
+      .subscribe({
+        next: () => {
+          if (successCallBack) {
+            successCallBack();
+          }
+        },
+        error: (error) => {
+          const _error = error.error as Array<{ key: string, value: Array<string> }>;
+          let message = "";
+          if (_error && Array.isArray(_error)) {
+            _error.forEach((_v) => {
+              _v.value.forEach((v) => {
+                message += `${v}<br>`;
+              });
             });
-    }
+          } else {
+            message = error.message;
+          }
+          if (errorCallBack) {
+            errorCallBack(message);
+          }
+        }
+      });
+  }
 
-    read(page: number = 0, size: number = 5, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Observable<{ totalProductCount: number; products: List_Product[] }> {
-        const observableData: Observable<{ totalProductCount: number; products: List_Product[] }> = this.httpClientService.get<{ totalProductCount: number; products: List_Product[] }>({
-            controller: "products",
-            action: "GetProductsPaging",
-            queryString: `page=${page}&size=${size}`
-        });
+  read(page: number = 0, size: number = 5, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Observable<{ totalProductCount: number; products: List_Product[] }> {
+    const observableData: Observable<{ totalProductCount: number; products: List_Product[] }> = this.httpClientService.get<{ totalProductCount: number; products: List_Product[] }>({
+      controller: "products",
+      action: "GetProductsPaging",
+      queryString: `page=${page}&size=${size}`
+    });
 
-        // Subscribe işlemi ile veriyi yakalıyoruz
-        observableData.subscribe({
-            next: () => {
-                // Başarılı geri dönüş aldığında callback fonksiyonunu çalıştır
-                if (successCallBack) {
-                    successCallBack(); // Eğer bir veri işlemek istiyorsanız, burada data'yı da kullanabilirsiniz
-                }
-            },
-            error: (errorResponse: HttpErrorResponse) => {
-                // Hata durumunda errorCallBack fonksiyonunu çalıştır
-                if (errorCallBack) {
-                    errorCallBack(errorResponse.message);
-                }
-            }
-        });
+    // Subscribe işlemi ile veriyi yakalıyoruz
+    observableData.subscribe({
+      next: () => {
+        // Başarılı geri dönüş aldığında callback fonksiyonunu çalıştır
+        if (successCallBack) {
+          successCallBack(); // Eğer bir veri işlemek istiyorsanız, burada data'yı da kullanabilirsiniz
+        }
+      },
+      error: (errorResponse: HttpErrorResponse) => {
+        // Hata durumunda errorCallBack fonksiyonunu çalıştır
+        if (errorCallBack) {
+          errorCallBack(errorResponse.message);
+        }
+      }
+    });
 
-        // Observable döndürüyoruz, böylece başka bileşenler de bu veriyi dinleyebilir
-        return observableData;
-    }
+    // Observable döndürüyoruz, böylece başka bileşenler de bu veriyi dinleyebilir
+    return observableData;
+  }
 
-    delete({ id, successCallBack, errorCallBack }: { id: string; successCallBack?: () => void; errorCallBack?: () => void; }): void {
-        this.httpClientService.delete<any>({
-            controller: "products",
-            action: "DeleteProduct"
-        }, id);
-    }
+  delete({ id }: { id: string; successCallBack?: () => void; errorCallBack?: () => void; }): void {
+    this.httpClientService.delete<any>({
+      controller: "products",
+      action: "DeleteProduct"
+    }, id);
+  }
+  deleteImage(id: string, imageId: string)  {
+  return  this.httpClientService.delete({
+      controller: "products",
+      action: "DeleteProductImage",
+      queryString: `imageId=${imageId}`
+    },id)
+  }
+
+  readImages(id: string): Observable<List_Product_Image[]> {
+    return this.httpClientService.get<List_Product_Image[]>({
+      controller: "products",
+      action: "GetProductImages"
+    }, id);
+  }
 }

@@ -9,7 +9,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
 import { DialogService } from '../../../../services/common/dialog.service';
 import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
-import { HttpClientService } from '../../../../services/common/http-client.service';
 
 @Component({
   selector: 'app-list',
@@ -23,7 +22,7 @@ export class ListComponent extends BaseComponent implements OnInit {
     private productService: ProductService,
     private alertifyService: AlertifyService,
     private faIconService: FaIconService,
-    private _dialogService: DialogService 
+    private _dialogService: DialogService
   ) {
     super(_spinner);
   }
@@ -60,14 +59,14 @@ export class ListComponent extends BaseComponent implements OnInit {
     });
   }
 
-  addProductImages(id: string) {
+  addProductImageDialog(id: string) {
     this._dialogService.openDialog({
       componentType: SelectProductImageDialogComponent,
       enterAnimationDuration: 600,
       exitAnimationDuration: 600,
       data: id,
       options: {
-        width: '1400px',
+        minWidth: '50vw'
       }
     });
   }

@@ -15,6 +15,7 @@ export class DialogService {
       {
         width:  dialogParameters.options?.width,
         height: dialogParameters.options?.height,
+        minWidth: dialogParameters.options?.minWidth,
         position: dialogParameters.options?.position,
         enterAnimationDuration: dialogParameters.enterAnimationDuration,
         exitAnimationDuration: dialogParameters.exitAnimationDuration,
@@ -41,6 +42,7 @@ export class DialogParameters {
 export class DialogOptions {
   width?: string = "250px";
   height?: string;
+  minWidth?: string ;
   position?: DialogPosition;
 
 }

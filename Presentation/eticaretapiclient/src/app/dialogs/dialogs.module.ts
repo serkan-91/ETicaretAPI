@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SelectProductImageDialogComponent } from './select-product-image-dialog/select-product-image-dialog.component';
 import { FileUploadComponent } from '../services/common/file-upload/file-upload.component';
 import { NgxFileDropModule } from 'ngx-file-drop';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
     MatButtonModule,
     NgxFileDropModule,
     MatFormFieldModule,
+    MatCardModule
   ]
 })
 export class DialogsModule { }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { AlertifyService, MessageType, Position } from '../../admin/alertify.service';
 import { CustomToastrService, ToastrMessageType, ToastrPosition } from '../../ui/custom-toastr.service';
@@ -8,6 +8,8 @@ import { FileUploadDialogComponent, FileUploadState } from '../../../dialogs/fil
 import { HttpHeaders } from '@angular/common/http';
 import { SpinnerType } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs/internal/Observable';
+import { List_Product_Image } from '../../../contracts/list_product_image';
 
 @Component({
   selector: 'app-file-upload',
@@ -26,11 +28,11 @@ export class FileUploadComponent {
   private maxFileSize = 20 * 1024 * 1024; // 20 MB
 
   @Input() options: Partial<FileUploadOptions>;
+  @Output() fileUploaded: EventEmitter<void> = new EventEmitter<void>(); // Dosya yüklendikten sonra tetiklenecek olay
 
   public selectedFiles(files: NgxFileDropEntry[]) {
     this.files = files;
     const fileData: FormData = new FormData();
-
     let hasFileSizeError = false;
 
     // Dosya boyutlarını kontrol et
@@ -82,8 +84,7 @@ export class FileUploadComponent {
         }, fileData).subscribe({
           next: () => {
             const message: string = "Files have been uploaded successfully.";
-            this._spinner.hide(SpinnerType.BallAtom);
-
+            this.fileUploaded.emit(); // Dosya başarıyla yüklendiğinde olayı tetikle
             if (this.options.isAdminPage) {
               this._alertifyService.message(message, {
                 dismissOthers: true,
@@ -96,6 +97,7 @@ export class FileUploadComponent {
                 position: ToastrPosition.TopRight
               });
             }
+            this._spinner.hide(SpinnerType.BallAtom);
           },
           error: () => {
             const message: string = "An unexpected error was encountered while uploading files.";
@@ -118,6 +120,7 @@ export class FileUploadComponent {
       }
     });
   }
+  images$: Observable<List_Product_Image[]>;
 }
 
 export class FileUploadOptions {
