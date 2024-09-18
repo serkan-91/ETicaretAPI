@@ -1,21 +1,23 @@
 ﻿namespace EticaretAPI.Persistence.Repositories;
 
-public class WriteRepository<T>(EticaretAPIDbContext _context) : IWriteRepository<T> where T : BaseEntity
+public class WriteRepository<T>(EticaretAPIDbContext _context) : IWriteRepository<T>
+	where T : BaseEntity
 	{
 	public DbSet<T> Table => _context.Set<T>();
 
-	public async Task<bool> AddAsync(T model) => (await Table.AddAsync(model)).State == EntityState.Added;
+	public async Task AddAsync(T model) => await Table.AddAsync(model);
 
-	public Task<bool> AddRangeAsync(List<T> model) => Task.FromResult(Table.AddRangeAsync(model).IsCompletedSuccessfully);
+	public async Task AddRangeAsync(List<T> datas) => await Table.AddRangeAsync(datas);
 
-	public bool Remove(T model) => Table.Remove(model).State == EntityState.Deleted;
+	public void RemoveAsync(T model) => Table.Remove(model);
 
-	public bool RemoveRange(List<T> datas)
-		{ Table.RemoveRange(datas); return true; }
+	public void RemoveRangeAsync(List<T> datas) => Table.RemoveRange(datas);
 
-	public async Task<bool> RemoveAsync(string id) => (await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id))) is T model && Remove(model);
+	public async Task RemoveAsync(string id) =>
+		Table.Remove(
+			await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id))
+				?? throw new Exception("Entity not found")
+		);
 
-	public bool Update(T model) => Table.Update(model).State == EntityState.Modified;
-
-	public async Task<int> SaveAsync() => await _context.SaveChangesAsync();
+	public void UpdateAsync(T model) => Table.Update(model);
 	}

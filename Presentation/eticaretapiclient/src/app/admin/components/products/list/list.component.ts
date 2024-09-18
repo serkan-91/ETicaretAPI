@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { List_Product } from '../../../../contracts/list_product';
+import { List_Product, Pagination } from '../../../../contracts/list_product';
 import { ProductService } from '../../../../services/common/models/product.service';
 import { BaseComponent, SpinnerType } from '../../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -37,11 +37,16 @@ export class ListComponent extends BaseComponent implements OnInit {
   async ngOnInit() {
     this.GetProducts();
   }
+
   GetProducts() {
+    // Pagination nesnesi oluşturuyoruz
+    const pagination = new Pagination(
+      this.paginator ? this.paginator.pageIndex : 1,  // Sayfa indexi, paginator mevcutsa al, değilse 0 (ilk sayfa)
+      this.paginator ? this.paginator.pageSize : 5   // Sayfa boyutu, paginator mevcutsa al, değilse varsayılan 5
+    );
     this.hideSpinner(SpinnerType.BallAtom)
     this.productService.read(
-      this.paginator ? this.paginator.pageIndex : 0,
-      this.paginator ? this.paginator.pageSize : 5,
+      pagination,
       () => this.hideSpinner(SpinnerType.BallAtom),
       errorMessage => this.alertifyService.message(errorMessage, {
         dismissOthers: true,
@@ -49,9 +54,9 @@ export class ListComponent extends BaseComponent implements OnInit {
         position: Position.TopRight
       })
     ).subscribe({
-      next: (allProducts: { totalProductCount: number; products: List_Product[] }) => {
-        this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
-        this.paginator.length = allProducts.totalProductCount;
+      next: (allProducts: { totalCount: number; items: List_Product[] }) => {
+        this.dataSource = new MatTableDataSource<List_Product>(allProducts.items);
+        this.paginator.length = allProducts.totalCount;
       },
       error: (error) => {
         console.error(error);

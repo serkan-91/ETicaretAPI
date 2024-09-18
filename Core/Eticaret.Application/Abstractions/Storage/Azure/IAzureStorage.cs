@@ -1,3 +1,8 @@
-﻿namespace EticaretAPI.Application.Abstractions.Storage.Azure;
+﻿using Azure.Storage.Blobs;
 
-public interface IAzureStorage : IStorage { }
+namespace EticaretAPI.Application.Abstractions.Storage.Azure;
+
+public interface IAzureStorage : IStorage
+	{
+	BlobServiceClient GetBlobClient();
+	}

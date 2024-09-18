@@ -1,22 +1,19 @@
+using EticaretAPI.API.Extensions;
+using EticaretAPI.Application.MappingProfiles;
 using EticaretAPI.Application.Validators.Products;
 using EticaretAPI.Infrastructure;
-using EticaretAPI.Infrastructure.Filters;
-using EticaretAPI.Infrastructure.Services.Storages.Local;
 using EticaretAPI.Persistence;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using System.Reflection;
 using static EticaretAPI.Domain.Entities.File;
 
 var builder = WebApplication.CreateBuilder(args);
 // Sadece geliþtirici ortamýnda user-secrets ekleyin
-// Konfigürasyon kaynaklarýný ekle
 builder.Configuration
 	.AddJsonFile("appsettings.json" , optional: true , reloadOnChange: true)
 	.AddUserSecrets<Program>(optional: true)
 	.AddEnvironmentVariables();
 
-// IConfiguration'ý Configurations sýnýfýna ayarla
 EticaretAPI.Infrastructure.Configurations.SetConfiguration(builder.Configuration);
 EticaretAPI.Persistence.Configurations.SetConfiguration(builder.Configuration);
 // Add configuration sources
@@ -28,6 +25,7 @@ builder.Services.AddInfrastructureServices();
 //builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddStorageService(StorageType.Azure);
 
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddCors(options =>
 	options.AddDefaultPolicy(policy =>
 		policy
@@ -37,18 +35,20 @@ builder.Services.AddCors(options =>
 	)
 );
 
-builder
-	.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
-	.ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+// FluentValidation'ý ekleyin
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+// Tüm doðrulayýcýlarý otomatik olarak taramak ve eklemek için
+builder.Services.AddValidatorsFromAssemblyContaining<Create_Product_Validator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddValidatorsFromAssemblyContaining<Create_Product_Validator>();
-
+// Add Antiforgery before building the app
+builder.Services.AddAntiforgery();
 var app = builder.Build();
+
+app.UseAntiforgery();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if(app.Environment.IsDevelopment())
 	{
@@ -64,13 +64,13 @@ else
 	{
 	app.UseHsts();
 	}
+app.MapProductsEndPoint();
 
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.MapControllerRoute(name: "default" , pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 
