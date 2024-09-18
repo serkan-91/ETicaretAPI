@@ -4,21 +4,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { AdminModule } from './admin/admin.module';
 import { UiModule } from './ui/ui.module';
-import { AppRoutingModule } from './app-routing,module';
+import { AppRoutingModule } from './app-routing.module';
+
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import $ from 'jquery';
 import { CommonModule } from '@angular/common';  // CommonModule'ü ekliyoruz
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { CsrfInterceptorService } from './services/interceptions/csrf-interceptor.service';
 
 @NgModule({
   declarations: [
-    AppComponent  
+    AppComponent
   ],
   bootstrap: [AppComponent],
-  exports: [ 
+  exports: [
     MatSidenavModule
   ],
   imports: [
@@ -28,11 +30,17 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     AppRoutingModule,
     AdminModule, UiModule,
     ToastrModule.forRoot(),
-    NgxSpinnerModule  
+    NgxSpinnerModule
   ],
   providers: [
     {
-      provide: "baseUrl", useValue: "https://localhost:7116/api", multi: true
+      provide: "baseUrl", useValue: "https://localhost:7116/api",
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CsrfInterceptorService,
+      multi: true
+
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync()

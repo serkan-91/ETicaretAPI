@@ -10,4 +10,8 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\eticaretapiclient</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\services\interceptors\" />
+    <Folder Include="src\app\services\tokens\" />
+  </ItemGroup>
 </Project>

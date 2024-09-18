@@ -12,12 +12,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { DialogsModule } from '../../../dialogs/dialogs.module';
 import { MatTableModule } from '@angular/material/table';
-import { FileUploadComponent } from '../../../services/common/file-upload/file-upload.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DeleteButtonComponent } from '../../../WrapperComponents/delete-button/delete-button.component';
 import { DeleteDirective } from '../../../directives/admin/delete.directive';
 import { NgModule } from '@angular/core';
-import { NgxFileDropModule } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({

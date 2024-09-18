@@ -1,27 +1,35 @@
-﻿{
-  "iisSettings": {
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:44419",
-      "sslPort": 44303
-    },
-    "windowsAuthentication": false
-  },
+{
   "profiles": {
     "EticaretAPI.API": {
-      "applicationUrl": "https://localhost:7116;http://localhost:5138",
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "launchBrowser": false
+      "applicationUrl": "https://localhost:7116;http://localhost:5138",
+      "nativeDebugging": true
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "launchUrl": "https://localhost:7116",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:7116;http://localhost:5138"
       },
-      "launchBrowser": false
+      "distributionName": ""
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:44419",
+      "sslPort": 44303
     }
   }
 }

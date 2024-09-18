@@ -1,12 +1,17 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, switchMap, throwError, timeout } from 'rxjs';
+import { CsrfService } from '../tokens/csrf-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpClientService {
-  constructor(private httpClient: HttpClient, @Inject("baseUrl") private baseUrl: string) { }
+
+  constructor(private httpClient: HttpClient, private csrfService: CsrfService,
+    @Inject("baseUrl") private baseUrl: string,
+
+  ) { }
 
   private url(requestParameter: Partial<RequestParameters>): string {
     const baseUrl = requestParameter.baseUrl ? requestParameter.baseUrl : this.baseUrl;
@@ -36,10 +41,30 @@ export class HttpClientService {
 
   post<T>(requestParameter: Partial<RequestParameters>, body: Partial<T>): Observable<T> {
     const url = this.buildUrl(requestParameter);
-    const headers = requestParameter.headers ? requestParameter.headers : new HttpHeaders();
 
-    return this.httpClient.post<T>(url, body, { headers });
+    // Set default headers or use the provided ones
+    let headers = requestParameter.headers ?? new HttpHeaders();
+
+    // Retrieve the CSRF token and execute the request
+    return this.csrfService.getCsrfToken().pipe(
+      switchMap(csrfToken => {
+        if (csrfToken) {
+          // If the CSRF token is present, add it to the headers
+          headers = headers.set('X-CSRF-TOKEN', csrfToken);
+        } 
+
+        // Perform the HTTP POST request, sending credentials (cookies)
+        return this.httpClient.post<T>(url, body, { headers, withCredentials: true }) 
+      }),
+      catchError((error) => {
+        // Log the error and throw a custom error message
+        console.error('Error occurred:', error);
+        return throwError(() => new Error('Something went wrong!'));
+      })
+    );
   }
+
+
 
   put<T>(requestParameter: Partial<RequestParameters>, body: Partial<T>): Observable<T> {
     const url = this.buildUrl(requestParameter);
@@ -52,6 +77,7 @@ export class HttpClientService {
     const headers = requestParameter.headers ? requestParameter.headers : new HttpHeaders();
     return this.httpClient.delete<T>(url, { headers });
   }
+
 }
 
 export class RequestParameters {

@@ -19,7 +19,7 @@ export class CreateComponent extends BaseComponent {
   @Output() createdProduct: EventEmitter<Create_Product> = new EventEmitter();
 
   @Output() fileUploadOptions: Partial<FileUploadOptions> = {
-    action: "upload",
+    action: "UploadProductImage",
     controller: "products",
     explanation: "The pictures drag and drop or choose",
     isAdminPage: true,
@@ -27,14 +27,14 @@ export class CreateComponent extends BaseComponent {
   }
 
   create(name: HTMLInputElement, stock: HTMLInputElement, price: HTMLInputElement) {
-    this.showSpinner(SpinnerType.BallAtom); // İşlem başladığında spinner göster
+    this.showSpinner(SpinnerType.BallAtom);  
     const create_product: Create_Product = new Create_Product();
     create_product.name = name.value;
     create_product.stock = parseInt(stock.value);
     create_product.price = parseFloat(price.value);
 
     this.productService.create(create_product, () => {
-      this.hideSpinner(SpinnerType.BallAtom); // Başarılı durumda spinner'ı gizle
+      this.hideSpinner(SpinnerType.BallAtom);  
       this.alertify.message("Product has been added.", {
         dismissOthers: true,
         messageType: MessageType.Success,

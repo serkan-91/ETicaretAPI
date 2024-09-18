@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { AlertifyService, MessageType, Position } from '../../admin/alertify.service';
 import { CustomToastrService, ToastrMessageType, ToastrPosition } from '../../ui/custom-toastr.service';
@@ -9,20 +9,27 @@ import { HttpHeaders } from '@angular/common/http';
 import { SpinnerType } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/internal/Observable';
-import { List_Product_Image } from '../../../contracts/list_product_image';
+import { List_Product_Image } from '../../../contracts/list_product_image'; 
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css']
 })
-export class FileUploadComponent {
+export class FileUploadComponent implements OnInit {
+
+
   constructor(private _httpClientService: HttpClientService,
     private _alertifyService: AlertifyService,
     private _toastrService: CustomToastrService,
     private _dialogService: DialogService,
-    private _spinner: NgxSpinnerService) { }
+    private _spinner: NgxSpinnerService,
+     ) { }
 
+    ngOnInit(): void {
+      
+    }
+   
   public files: NgxFileDropEntry[] = [];
   public errorMessage: string = '';
   private maxFileSize = 20 * 1024 * 1024; // 20 MB
@@ -34,17 +41,15 @@ export class FileUploadComponent {
     this.files = files;
     const fileData: FormData = new FormData();
     let hasFileSizeError = false;
-
-    // Dosya boyutlarını kontrol et
+     
     for (const file of files) {
       (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
         if (_file.size > this.maxFileSize) {
-          // Eğer dosya boyutu sınırdan büyükse hata mesajı göster
+     
           this.errorMessage = `${_file.name} cannot be bigger than 20 MB.`;
           hasFileSizeError = true;
-          this._spinner.hide(SpinnerType.BallAtom); // Spinner kapatılıyor
+          this._spinner.hide(SpinnerType.BallAtom);
           const message: string = `${_file.name} cannot be bigger than 20 MB `;
-          // Kullanıcı admin ise Alertify, değilse Toastr kullan
           if (this.options.isAdminPage) {
             this._alertifyService.message(message, {
               dismissOthers: true,
@@ -57,10 +62,9 @@ export class FileUploadComponent {
               position: ToastrPosition.TopRight
             });
           }
-        } else {
-          // Dosya boyutu uygun, FormData'ya ekle
+        } else { 
           fileData.append(_file.name, _file, file.relativePath);
-          this.errorMessage = ''; // Hata mesajını temizle
+          this.errorMessage = ''; 
         }
       });
     }
@@ -69,22 +73,24 @@ export class FileUploadComponent {
     if (hasFileSizeError) {
       return; // İşlemi iptal et
     }
-
-    // Dosya boyutları uygunsa dialog aç ve dosya yükle
+     
     this._dialogService.openDialog({
       componentType: FileUploadDialogComponent,
       data: FileUploadState.Yes,
-      afterClosed: () => {
+      afterClosed: () => { 
+        const headers = new HttpHeaders()
+
         this._spinner.show(SpinnerType.BallAtom);
         this._httpClientService.post({
           controller: this.options.controller,
           action: this.options.action,
           queryString: this.options.queryString,
-          headers: new HttpHeaders({ "responseType": "blob" })
+          headers
+          
         }, fileData).subscribe({
           next: () => {
             const message: string = "Files have been uploaded successfully.";
-            this.fileUploaded.emit(); // Dosya başarıyla yüklendiğinde olayı tetikle
+            this.fileUploaded.emit() 
             if (this.options.isAdminPage) {
               this._alertifyService.message(message, {
                 dismissOthers: true,
@@ -99,7 +105,7 @@ export class FileUploadComponent {
             }
             this._spinner.hide(SpinnerType.BallAtom);
           },
-          error: () => {
+          error: (err) => {
             const message: string = "An unexpected error was encountered while uploading files.";
             this._spinner.hide(SpinnerType.BallAtom);
 

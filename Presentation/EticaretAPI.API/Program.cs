@@ -8,48 +8,57 @@ using FluentValidation.AspNetCore;
 using static EticaretAPI.Domain.Entities.File;
 
 var builder = WebApplication.CreateBuilder(args);
-// Sadece geliþtirici ortamýnda user-secrets ekleyin
+builder.Services.AddControllers();
+// Load configurations
 builder.Configuration
 	.AddJsonFile("appsettings.json" , optional: true , reloadOnChange: true)
 	.AddUserSecrets<Program>(optional: true)
 	.AddEnvironmentVariables();
 
+// Set configurations
 EticaretAPI.Infrastructure.Configurations.SetConfiguration(builder.Configuration);
 EticaretAPI.Persistence.Configurations.SetConfiguration(builder.Configuration);
-// Add configuration sources
 
-// Build the app and continue with setup...
+// Add services to the container
+builder.Services.AddAuthorization(); // Add authorization services
+builder.Services.AddAuthentication(); // Add your authentication configuration here
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
-
-//builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddStorageService(StorageType.Azure);
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddCors(options =>
-	options.AddDefaultPolicy(policy =>
-		policy
-			.WithOrigins("http://localhost:4200" , "https://localhost:4200")
-			.AllowAnyHeader()
-			.AllowAnyMethod()
-	)
-);
 
-// FluentValidation'ý ekleyin
+// Configure CORS policy
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowLocalhost4200" , policy =>
+	{
+		policy.WithOrigins("https://localhost:4200" , "http://localhost:4200")
+			  .AllowAnyHeader()
+			  .AllowAnyMethod()
+			  .AllowCredentials(); // Allow cookies and authentication
+	});
+});
+
+// FluentValidation setup
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
-// Tüm doðrulayýcýlarý otomatik olarak taramak ve eklemek için
 builder.Services.AddValidatorsFromAssemblyContaining<Create_Product_Validator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-// Add Antiforgery before building the app
-builder.Services.AddAntiforgery();
+
+// Add antiforgery services
+builder.Services.AddAntiforgery(options =>
+{
+	options.Cookie.Name = ".AspNetCore.Antiforgery.Gnn5bnblBGc"; // Set cookie name
+	options.Cookie.SameSite = SameSiteMode.None; // Allow cross-origin requests
+	options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // HTTPS for secure cookies
+});
+
+// Build the application
 var app = builder.Build();
-
-app.UseAntiforgery();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
+// Development environment configurations
 if(app.Environment.IsDevelopment())
 	{
 	app.UseDeveloperExceptionPage();
@@ -64,14 +73,34 @@ else
 	{
 	app.UseHsts();
 	}
-app.MapProductsEndPoint();
-
-app.UseCors();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication(); // Use authentication middleware
+app.UseAuthorization(); // Use authorization middleware
+app.UseAntiforgery(); // This enables antiforgery protection
+app.UseCors("AllowLocalhost4200"); // Use CORS policy
+
+app.UseEndpoints(endpoints =>
+{
+	endpoints.MapControllers();
+});
+// Middleware pipeline setup
+app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
+app.UseStaticFiles(); // Serve static files
 
 
+// Custom middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<SaveChangesMiddleware>();
+
+
+
+// Routing setup
+app.MapProductsEndPoint();
+app.MapCrfTokenEndPoint();
+
+// Fallback for SPA
 app.MapFallbackToFile("index.html");
 
+
+// Run the application
 app.Run();

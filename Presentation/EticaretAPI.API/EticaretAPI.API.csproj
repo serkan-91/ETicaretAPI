@@ -13,10 +13,11 @@
     <UserSecretsId>4ff914ed-6be9-4ba1-9825-42f3453e2c27</UserSecretsId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>7</WarningLevel>
+    <WarningLevel>8</WarningLevel>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningLevel>7</WarningLevel>
+    <WarningLevel>8</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.10.0" />

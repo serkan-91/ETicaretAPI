@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { List_Product, Pagination } from '../../../../contracts/list_product';
+import { List_Product } from '../../../../contracts/list_product';
 import { ProductService } from '../../../../services/common/models/product.service';
 import { BaseComponent, SpinnerType } from '../../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
 import { DialogService } from '../../../../services/common/dialog.service';
 import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
@@ -17,6 +17,11 @@ import { SelectProductImageDialogComponent } from '../../../../dialogs/select-pr
 })
 
 export class ListComponent extends BaseComponent implements OnInit {
+
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'photos', 'edit', 'delete'];
+  dataSource: MatTableDataSource<List_Product> = null;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   constructor(
     _spinner: NgxSpinnerService,
     private productService: ProductService,
@@ -26,27 +31,17 @@ export class ListComponent extends BaseComponent implements OnInit {
   ) {
     super(_spinner);
   }
+ 
   faXmark = this.faIconService.faXmark;
   faPen = this.faIconService.faPen;
   faImage = this.faIconService.faImage;
 
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'photos', 'edit', 'delete'];
-  dataSource: MatTableDataSource<List_Product> = null;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-
-  async ngOnInit() {
-    this.GetProducts();
-  }
-
+ 
   GetProducts() {
-    // Pagination nesnesi oluşturuyoruz
-    const pagination = new Pagination(
-      this.paginator ? this.paginator.pageIndex : 1,  // Sayfa indexi, paginator mevcutsa al, değilse 0 (ilk sayfa)
-      this.paginator ? this.paginator.pageSize : 5   // Sayfa boyutu, paginator mevcutsa al, değilse varsayılan 5
-    );
     this.hideSpinner(SpinnerType.BallAtom)
     this.productService.read(
-      pagination,
+      this.paginator ? this.paginator.pageIndex : 0,
+      this.paginator ? this.paginator.pageSize : 5,
       () => this.hideSpinner(SpinnerType.BallAtom),
       errorMessage => this.alertifyService.message(errorMessage, {
         dismissOthers: true,
@@ -85,6 +80,9 @@ export class ListComponent extends BaseComponent implements OnInit {
   }
 
   pageChanged() {
+    this.GetProducts();
+  }
+  async ngOnInit() {
     this.GetProducts();
   }
 }

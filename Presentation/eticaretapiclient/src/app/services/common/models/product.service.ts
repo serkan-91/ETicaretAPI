@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { Create_Product } from '../../../contracts/create_product';
 import { HttpErrorResponse } from '@angular/common/http';
-import { List_Product, Pagination } from '../../../contracts/list_product';
+import { List_Product } from '../../../contracts/list_product';
 import { BaseComponent } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
@@ -52,12 +52,11 @@ export class ProductService extends BaseComponent {
       });
   }
 
-  read(pagination: Partial<Pagination>, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Observable<{ totalCount: number; items: List_Product[] }> {
-    const observableData: Observable<{ totalCount: number; items: List_Product[] }> =
-      this.httpClientService.get<{ totalCount: number; items: List_Product[] }>({
+  read(page: number = 0, size: number = 5, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Observable<{ totalCount: number; items: List_Product[] }> {
+    const observableData: Observable<{ totalCount: number; items: List_Product[] }> = this.httpClientService.get<{ totalCount: number; items: List_Product[] }>({
       controller: "products",
       action: "GetProductsPaging",
-      queryString: `page=${pagination.page ?? 0}&size=${pagination.size ?? 5}`  // Eğer page veya size undefined ise varsayılan 0 ve 5 kullanılıyor
+      queryString: `page=${page}&size=${size}`
     });
 
     // Subscribe işlemi ile veriyi yakalıyoruz
@@ -88,7 +87,7 @@ export class ProductService extends BaseComponent {
   }
   deleteImage(id: string, imageId: string)  {
   return  this.httpClientService.delete({
-      controller: "products",
+    controller: "products",
       action: "DeleteProductImage",
       queryString: `imageId=${imageId}`
     },id)

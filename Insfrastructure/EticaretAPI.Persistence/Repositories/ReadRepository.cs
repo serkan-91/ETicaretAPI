@@ -50,7 +50,7 @@ public class ReadRepository<T>(EticaretAPIDbContext _context) : IReadRepository<
 		var totalCount = await query.CountAsync();
 
 		var items = await query
-			.Skip((pagination.Page - 1) * pagination.Size)
+			.Skip((pagination.Page) * pagination.Size)
 			.Take(pagination.Size)
 			.ToListAsync();
 

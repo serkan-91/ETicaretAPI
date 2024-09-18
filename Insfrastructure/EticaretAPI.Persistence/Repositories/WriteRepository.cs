@@ -13,11 +13,12 @@ public class WriteRepository<T>(EticaretAPIDbContext _context) : IWriteRepositor
 
 	public void RemoveRangeAsync(List<T> datas) => Table.RemoveRange(datas);
 
-	public async Task RemoveAsync(string id) =>
-		Table.Remove(
-			await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id))
-				?? throw new Exception("Entity not found")
-		);
+	public async Task RemoveAsync(string id) {
+		var entity = await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id))
+		?? throw new Exception("Entity not found");
+		Table.Remove(entity);
+		}
+
 
 	public void UpdateAsync(T model) => Table.Update(model);
 	}
