@@ -1,57 +1,126 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using EticaretAPI.Application.Abstractions.Storage.Azure;
+using EticaretAPI.Application.Common.Dtos;
+using EticaretAPI.Application.ResponseParameters;
 using static EticaretAPI.Domain.Entities.File;
 
 namespace EticaretAPI.Infrastructure.Services.Storages.Azure;
 
-public class AzureStorage : Storage, IAzureStorage {
-	private readonly BlobServiceClient _blobServiceClient = new(Configurations.GetCurrentStorage);
-	private BlobContainerClient _blobContainerClient;
-	public StorageType StorageServiceType => StorageType.Azure;
-	public string GetBasePathOrContainer => _blobServiceClient.Uri.AbsoluteUri;
+public class AzureStorage : Storage, IAzureStorage
+{
+    private BlobContainerClient _blobContainerClient;
+    private readonly BlobServiceClient _blobServiceClient = new(Configurations.GetCurrentStorage);
 
-	public async Task<List<(string fileName, string pathOrContainer)>> UploadFilesAsync(
-		string containerName ,
-		List<string> files
-	) {
-	List<(string fileName, string pathOrContainer)> datas = [];
+    public async Task<List<string>> GetFilesAsync(
+        string containerName,
+        CancellationToken cancellationToken
+    )
+    {
+        _blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        List<string> fileNames = new List<string>();
 
-	_blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-	await _blobContainerClient.CreateIfNotExistsAsync();
-	await _blobContainerClient.SetAccessPolicyAsync(PublicAccessType.BlobContainer);
+        await foreach (
+            BlobItem blobItem in _blobContainerClient.GetBlobsAsync(
+                cancellationToken: cancellationToken
+            )
+        )
+        {
+            fileNames.Add(blobItem.Name);
+        }
 
-	foreach(string filePath in files)
-		{
-	using var stream = new FileStream(filePath , FileMode.Open , FileAccess.Read);
-	string uniqueFileName = await FileRenameAsync(containerName , Path.GetFileName(filePath));
+        return fileNames;
+    }
 
-	await _blobContainerClient.GetBlobClient(uniqueFileName).UploadAsync(stream , true);
-	datas.Add((Path.GetFileName(filePath), $"{containerName}/{uniqueFileName}"));
-		}
-	return datas;
-		}
+    protected override async Task<bool> HasFileAsync(
+        string containerName,
+        string fileName,
+        CancellationToken cancellationToken
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
 
-	public async Task<bool> DeleteFileAsync(string containerName , string fileName) =>
-		await _blobServiceClient
-			.GetBlobContainerClient(containerName)
-			.GetBlobClient(fileName)
-			.DeleteIfExistsAsync();
+        BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(
+            containerName
+        );
+        BlobClient blobClient = containerClient.GetBlobClient(fileName);
+        bool exists = await blobClient.ExistsAsync(cancellationToken).ConfigureAwait(false);
 
-	public List<string> GetFiles(string containerName) {
-	_blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
-	return _blobContainerClient.GetBlobs().Select(blob => blob.Name).ToList();
-		}
+        return exists;
+    }
 
-	protected override async Task<bool> HasFileAsync(string containerName , string fileName) {
-	BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(
-			containerName
-		);
-	BlobClient blobClient = containerClient.GetBlobClient(fileName);
-	return await blobClient.ExistsAsync();
-		}
+    public async Task<bool> DeleteFileAsync(
+        string containerName,
+        string fileName,
+        CancellationToken cancellationToken
+    )
+    {
+        // BlobClient'ı al
+        var blobClient = _blobServiceClient
+            .GetBlobContainerClient(containerName)
+            .GetBlobClient(fileName);
 
-	public string GetBasePath() {
-	throw new NotImplementedException();
-		}
-	}
+        // Dosyanın silinmesini dene
+        bool result = await blobClient
+            .DeleteIfExistsAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        return result;
+    }
+
+    public string GetBasePath()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<UpladImageResults> UploadFilesAsync(
+        string containerName,
+        List<FileDto> files,
+        CancellationToken cancellationToken
+    )
+    {
+        UpladImageResults datas = new UpladImageResults();
+
+        _blobContainerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        await _blobContainerClient
+            .CreateIfNotExistsAsync(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        await _blobContainerClient
+            .SetAccessPolicyAsync(
+                PublicAccessType.BlobContainer,
+                cancellationToken: cancellationToken
+            )
+            .ConfigureAwait(false);
+
+        foreach (FileDto file in files)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using var stream = new MemoryStream(file.Content);
+            string uniqueFileName = await FileRenameAsync(
+                    containerName,
+                    file.FileName,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
+
+            await _blobContainerClient
+                .GetBlobClient(uniqueFileName)
+                .UploadAsync(stream, true, cancellationToken)
+                .ConfigureAwait(false);
+
+            datas.UpladImages.Add(
+                new UpladImageResult
+                {
+                    FileName = uniqueFileName,
+                    PathOrContainerName = $"{containerName}/{uniqueFileName}",
+                }
+            );
+        }
+        return datas;
+    }
+
+    public string GetBasePathOrContainer => _blobServiceClient.Uri.AbsoluteUri;
+    public StorageType StorageServiceType => StorageType.Azure;
+}

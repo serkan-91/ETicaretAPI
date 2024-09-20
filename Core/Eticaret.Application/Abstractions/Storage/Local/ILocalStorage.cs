@@ -1,4 +1,3 @@
 ﻿namespace EticaretAPI.Application.Abstractions.Storage.Local;
-public interface ILocalStorage : IStorage {
-	}
 
+public interface ILocalStorage : IStorage { }

@@ -1,9 +1,9 @@
 ﻿namespace EticaretAPI.Persistence.Repositories;
 
 public class InvoiceFileReadRepository
-	: ReadRepository<Domain.Entities.InvoiceImageFile>,
-		IInvoiceFileReadRepository
+    : ReadRepository<Domain.Entities.InvoiceImageFile>,
+        IInvoiceFileReadRepository
 {
-	public InvoiceFileReadRepository(EticaretAPIDbContext _context)
-		: base(_context) { }
+    public InvoiceFileReadRepository(EticaretAPIDbContext _context)
+        : base(_context) { }
 }

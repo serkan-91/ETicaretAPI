@@ -2,6 +2,6 @@
 
 public class OrderReadRepository : ReadRepository<Order>, IOrderReadRepository
 {
-	public OrderReadRepository(EticaretAPIDbContext context)
-		: base(context) { }
+    public OrderReadRepository(EticaretAPIDbContext context)
+        : base(context) { }
 }

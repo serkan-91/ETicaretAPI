@@ -2,6 +2,6 @@
 
 public class FileWriteRepository : WriteRepository<Domain.Entities.File>, IFileWriteRepository
 {
-	public FileWriteRepository(EticaretAPIDbContext _context)
-		: base(_context) { }
+    public FileWriteRepository(EticaretAPIDbContext _context)
+        : base(_context) { }
 }

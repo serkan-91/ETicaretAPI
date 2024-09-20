@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -23,20 +22,27 @@ namespace EticaretAPI.Persistence.Migrations
                     ContentType = table.Column<string>(type: "text", nullable: true),
                     Size = table.Column<long>(type: "bigint", nullable: false),
                     Url = table.Column<string>(type: "text", nullable: true),
-                    Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Discriminator = table.Column<string>(
+                        type: "character varying(21)",
+                        maxLength: 21,
+                        nullable: false
+                    ),
+                    CreatedDate = table.Column<DateTime>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    ),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Files", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Files");
+            migrationBuilder.DropTable(name: "Files");
         }
     }
 }

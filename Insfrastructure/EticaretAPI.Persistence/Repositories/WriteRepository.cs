@@ -1,24 +1,29 @@
 ﻿namespace EticaretAPI.Persistence.Repositories;
 
 public class WriteRepository<T>(EticaretAPIDbContext _context) : IWriteRepository<T>
-	where T : BaseEntity
-	{
-	public DbSet<T> Table => _context.Set<T>();
+    where T : BaseEntity
+{
+    public DbSet<T> Table => _context.Set<T>();
 
-	public async Task AddAsync(T model) => await Table.AddAsync(model);
+    public Task AddAsync(T model, CancellationToken cancellation) =>
+        Task.Run(() => Table.AddAsync(model, cancellation).ConfigureAwait(false));
 
-	public async Task AddRangeAsync(List<T> datas) => await Table.AddRangeAsync(datas);
+    public Task AddRangeAsync(List<T> datas, CancellationToken cancellationToken) =>
+        Task.Run(() => Table.AddRangeAsync(datas, cancellationToken).ConfigureAwait(false));
 
-	public void RemoveAsync(T model) => Table.Remove(model);
+    public Task RemoveAsync(T model, CancellationToken cancellationToken) =>
+        Task.Run(() => Table.Remove(model), cancellationToken);
 
-	public void RemoveRangeAsync(List<T> datas) => Table.RemoveRange(datas);
+    public void RemoveRangeAsync(List<T> datas) => Table.RemoveRange(datas);
 
-	public async Task RemoveAsync(string id) {
-		var entity = await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id))
-		?? throw new Exception("Entity not found");
-		Table.Remove(entity);
-		}
+    public async Task RemoveAsync(string id, CancellationToken cancellationToken)
+    {
+        var entity =
+            await Table
+                .FirstOrDefaultAsync(data => data.Id == Guid.Parse(id), cancellationToken)
+                .ConfigureAwait(false) ?? throw new Exception("Entity not found");
+        Table.Remove(entity);
+    }
 
-
-	public void UpdateAsync(T model) => Table.Update(model);
-	}
+    public void UpdateAsync(T model) => Table.Update(model);
+}

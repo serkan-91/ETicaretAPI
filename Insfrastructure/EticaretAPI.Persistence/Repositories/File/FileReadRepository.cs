@@ -2,6 +2,6 @@
 
 public class FileReadRepository : ReadRepository<Domain.Entities.File>, IFileReadRepository
 {
-	public FileReadRepository(EticaretAPIDbContext _context)
-		: base(_context) { }
+    public FileReadRepository(EticaretAPIDbContext _context)
+        : base(_context) { }
 }

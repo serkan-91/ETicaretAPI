@@ -1,84 +1,40 @@
-﻿using System.Net.Sockets;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using System.Net;
+using System.Net.Sockets;
+using Newtonsoft.Json;
 using Npgsql;
 
 namespace EticaretAPI.API.Extensions;
 
-public class ExceptionHandlingMiddleware(
-	RequestDelegate _next ,
-	ILogger<ExceptionHandlingMiddleware> Logger
-)
-	{
-	public async Task Invoke(HttpContext context)
-		{
-		try
-			{
-			// Sonraki middleware veya endpoint'e geçiş yap
-			await _next(context);
-			}
-		catch(Exception ex)
-			{
-			// İstisnayı logla
-			Logger.LogError(ex , "an exception was occur");
+public class ExceptionHandlingMiddleware
+{
+    private readonly RequestDelegate _next;
 
-			// İstisnayı işle ve uygun yanıtı dön
-			await HandleExceptionAsync(context , ex);
-			}
-		}
+    public ExceptionHandlingMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
 
-	private Task HandleExceptionAsync(HttpContext context , Exception exception)
-		{
-		// HTTP durum kodunu ve mesajını belirle
-		int statusCode;
-		string message;
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            // Diğer işlemler...
+            await _next(context).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // Hata yönetimi
+            await HandleExceptionAsync(context, ex).ConfigureAwait(false);
+        }
+    }
 
-		switch(exception)
-			{
-			case ArgumentNullException argNullEx:
-				statusCode = StatusCodes.Status400BadRequest;
-				message = argNullEx.Message;
-				break;
+    private Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+        // Hata yanıtı yönetimi
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-			case UnauthorizedAccessException unauthorizedEx:
-				statusCode = StatusCodes.Status401Unauthorized;
-				message = $"Access Denied. : {unauthorizedEx.Message}";
-				break;
-
-			case InvalidOperationException invalidOpEx:
-				statusCode = StatusCodes.Status400BadRequest;
-				message = invalidOpEx.Message;
-				break;
-
-			case FormatException formatEx:
-				statusCode = StatusCodes.Status400BadRequest;
-				message = $"Invalid Data Format  {formatEx.Message}";
-				break;
-
-			case NpgsqlException npgsqlEx:
-				statusCode = StatusCodes.Status500InternalServerError;
-				message = "Connection Error : " + npgsqlEx.Message;
-				break;
-
-			case SocketException socketEx:
-				statusCode = StatusCodes.Status500InternalServerError;
-				message = "Network Error : " + socketEx.Message;
-				break;
-
-			default:
-				statusCode = StatusCodes.Status500InternalServerError;
-				message = "Unexpected Error.";
-				break;
-			}
-
-		context.Response.ContentType = "application/json";
-		context.Response.StatusCode = statusCode;
-
-		// Yanıt olarak dönecek nesne
-		var response = new { error = message };
-
-		// Yanıtı JSON formatında gönder
-		return context.Response.WriteAsJsonAsync(response);
-		}
-	}
+        var result = JsonConvert.SerializeObject(new { error = ex.Message });
+        return context.Response.WriteAsync(result);
+    }
+}

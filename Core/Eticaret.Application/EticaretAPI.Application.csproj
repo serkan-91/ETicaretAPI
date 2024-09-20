@@ -1,20 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
-    <PackageReference Include="FluentValidation" Version="11.10.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-    <PackageReference Include="Npgsql" Version="8.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Eticaret.Domain\EticaretAPI.Domain.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.21.2" />
+		<PackageReference Include="FluentValidation" Version="11.10.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Npgsql" Version="8.0.4" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Eticaret.Domain\EticaretAPI.Domain.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Common\Helpers\" />
+	</ItemGroup>
 </Project>

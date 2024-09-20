@@ -11,7 +11,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Eticaret.Application\EticaretAPI.Application.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Filters\" />
-  </ItemGroup>
 </Project>

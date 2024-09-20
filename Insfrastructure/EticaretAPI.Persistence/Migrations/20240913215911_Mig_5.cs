@@ -15,15 +15,14 @@ namespace EticaretAPI.Persistence.Migrations
                 table: "Files",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "StorageTypes",
-                table: "Files");
+            migrationBuilder.DropColumn(name: "StorageTypes", table: "Files");
         }
     }
 }

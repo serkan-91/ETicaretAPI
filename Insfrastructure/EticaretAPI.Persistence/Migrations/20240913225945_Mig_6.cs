@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,35 +14,32 @@ namespace EticaretAPI.Persistence.Migrations
                 name: "ProductId",
                 table: "Files",
                 type: "uuid",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_Files_ProductId",
                 table: "Files",
-                column: "ProductId");
+                column: "ProductId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Files_Products_ProductId",
                 table: "Files",
                 column: "ProductId",
                 principalTable: "Products",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Files_Products_ProductId",
-                table: "Files");
+            migrationBuilder.DropForeignKey(name: "FK_Files_Products_ProductId", table: "Files");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Files_ProductId",
-                table: "Files");
+            migrationBuilder.DropIndex(name: "IX_Files_ProductId", table: "Files");
 
-            migrationBuilder.DropColumn(
-                name: "ProductId",
-                table: "Files");
+            migrationBuilder.DropColumn(name: "ProductId", table: "Files");
         }
     }
 }

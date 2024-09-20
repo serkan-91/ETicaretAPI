@@ -1,14 +1,23 @@
-﻿namespace EticaretAPI.Application.Abstractions.Storage;
+﻿using EticaretAPI.Application.Common.Dtos;
+using EticaretAPI.Application.ResponseParameters;
 
-public interface IStorage {
+namespace EticaretAPI.Application.Abstractions.Storage;
 
-	Task<List<(string fileName, string pathOrContainer)>> UploadFilesAsync(
-		string pathOrContainer ,
-		List<string> fileNames
-	);
+public interface IStorage
+{
+    Task<UpladImageResults> UploadFilesAsync(
+        string pathOrContainer,
+        List<FileDto> files,
+        CancellationToken cancellationToken
+    );
 
-	Task<bool> DeleteFileAsync(string pathOrContainer , string fileName);
+    Task<bool> DeleteFileAsync(
+        string pathOrContainer,
+        string fileName,
+        CancellationToken cancellationToken
+    );
 
-	List<string> GetFiles(string pathOrContainer);
-	string GetBasePathOrContainer { get; }
-	}
+    Task<List<string>> GetFilesAsync(string pathOrContainer, CancellationToken cancellationToken);
+
+    string GetBasePathOrContainer { get; }
+}

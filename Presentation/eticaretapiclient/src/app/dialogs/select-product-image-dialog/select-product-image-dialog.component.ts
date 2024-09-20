@@ -70,9 +70,11 @@ export class SelectProductImageDialogComponent extends BaseDialog<SelectProductI
           )
           .subscribe({
             next: () => {
-              this.images$ = this.images$.pipe(
-                map(images => images.filter(image => image.id !== imageId))
-              );
+              if (this.images$) {
+                this.images$ = this.images$.pipe(
+                  map(images => images.filter(image => image.id !== imageId))
+                );
+              }
               this._spinner.hide(SpinnerType.BallAtom);
             },
             error: (err) => {

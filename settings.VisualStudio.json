@@ -1,0 +1,12 @@
+/* Visual Studio Settings File */
+{
+  "debugging.symbols.load.moduleFilterMode": "loadOnlyIncluded",
+  "debugging.symbols.location.searchMicrosoftSymbolServer": true,
+  "debugging.symbols.location.searchNuGetOrgSymbolServer": true,
+  "debugging.symbols.location.searchPaths": [
+    {
+      "enabled": true,
+      "location": "C:\\Users\\serkan\\AppData\\Local\\Temp\\SymbolCache"
+    }
+  ]
+}

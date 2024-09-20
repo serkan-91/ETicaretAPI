@@ -2,6 +2,6 @@
 
 public class ProductReadRepository : ReadRepository<Product>, IProductReadRepository
 {
-	public ProductReadRepository(EticaretAPIDbContext context)
-		: base(context) { }
+    public ProductReadRepository(EticaretAPIDbContext context)
+        : base(context) { }
 }

@@ -2,11 +2,13 @@
   "profiles": {
     "EticaretAPI.API": {
       "commandName": "Project",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:7116;http://localhost:5138",
-      "nativeDebugging": true
+      "nativeDebugging": true,
+      "hotReloadEnabled": true
     },
     "IIS Express": {
       "commandName": "IISExpress",

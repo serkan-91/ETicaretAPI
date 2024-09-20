@@ -1,17 +1,19 @@
-﻿namespace EticaretAPI.Application.Repositories;
+﻿using System.Threading;
+
+namespace EticaretAPI.Application.Repositories;
 
 public interface IWriteRepository<T> : IRepository<T>
-	where T : BaseEntity
-	{
-	Task AddAsync(T model);
+    where T : BaseEntity
+{
+    Task AddAsync(T model, CancellationToken cancellationToken);
 
-	Task AddRangeAsync(List<T> model);
+    Task AddRangeAsync(List<T> model, CancellationToken cancellationToken);
 
-	void RemoveAsync(T model);
+    Task RemoveAsync(string id, CancellationToken cancellationToken);
 
-	Task RemoveAsync(string id);
+    Task RemoveAsync(T model, CancellationToken cancellationToken);
 
-	void RemoveRangeAsync(List<T> datas);
+    void RemoveRangeAsync(List<T> datas);
 
-	void UpdateAsync(T model);
-	}
+    void UpdateAsync(T model);
+}
