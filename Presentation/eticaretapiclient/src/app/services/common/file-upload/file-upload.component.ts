@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { AlertifyService, MessageType, Position } from '../../admin/alertify.service';

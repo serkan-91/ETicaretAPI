@@ -1,20 +1,57 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "parser": "@typescript-eslint/parser",
-  "plugins": [ "@typescript-eslint" ],
-  "rules": {
-    "no-unused-vars": [
-      "error",
-      {
-        "vars": "all",
-        "args": "after-used",
-        "caughtErrors": "all",
-        "ignoreRestSiblings": false,
-        "reportUsedIgnorePattern": false
+  "root": true,
+  "ignorePatterns": [ "projects/**/*" ],
+  "overrides": [
+    {
+      "files": [ "*.ts" ],
+      "parserOptions": {
+        "project": [ "./tsconfig.json" ], // TypeScript ayarlarını tsconfig.json'dan çeker
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "plugin:@typescript-eslint/recommended", // TypeScript için önerilen kurallar
+        "plugin:@angular-eslint/recommended" // Angular için önerilen ESLint kuralları
+      ],
+      "plugins": [
+        "@typescript-eslint", // TypeScript ile uyumlu ESLint kuralları
+        "@angular-eslint" // Angular için özel ESLint kuralları
+      ],
+      "rules": {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "app",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "app",
+            "style": "camelCase"
+          }
+        ],
+        "@typescript-eslint/explicit-function-return-type": "off", // Fonksiyon dönüş tiplerini zorunlu kılma
+
+        "@typescript-eslint/no-unused-vars": [
+          "warn", // Kullanılmayan değişkenler uyarı olarak işaretlenecek
+          {
+            "vars": "all", // Tüm değişkenleri kontrol et
+            "args": "none", // Fonksiyon argümanlarını kontrol etme
+            "ignoreRestSiblings": false // Rest parametrelerini dahil et
+          }
+        ],
+        "quotes": [ "error", "single" ] // Tek tırnak kullanımı zorunlu
       }
-    ]
-  }
+    },
+    {
+      "files": [ "*.html" ],
+      "extends": [ "plugin:@angular-eslint/template/recommended" ], // HTML şablonları için Angular ESLint kuralları
+      "rules": {
+        // HTML şablonları için ek kurallar buraya eklenebilir
+      }
+    }
+  ]
+}
