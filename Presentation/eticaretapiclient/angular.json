@@ -72,6 +72,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "open": true
+          },
           "configurations": {
             "production": {
               "buildTarget": "eticaretapiclient:build:production"
@@ -107,11 +110,23 @@
             "scripts": [],
             "karmaConfig": "karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "88e80adb-0279-4553-8f30-e7e3563d6d32"
+    "analytics": "88e80adb-0279-4553-8f30-e7e3563d6d32",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

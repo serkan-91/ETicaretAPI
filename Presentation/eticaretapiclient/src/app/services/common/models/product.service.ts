@@ -80,7 +80,7 @@ export class ProductService extends BaseComponent {
   }
 
   delete({ id }: { id: string; successCallBack?: () => void; errorCallBack?: () => void; }): void {
-    this.httpClientService.delete<any>({
+    this.httpClientService.delete<unknown>({
       controller: "products",
       action: "DeleteProduct"
     }, id);

@@ -7,10 +7,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>warnings</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Exe</OutputType> 
-    <UserSecretsId>4ff914ed-6be9-4ba1-9825-42f3453e2c27</UserSecretsId>
+    <UserSecretsId>4ff914ed-6be9-4ba1-9825-42f3453e2c27</UserSecretsId> 
+    <PublishAot>False</PublishAot> 
+    <SignAssembly>False</SignAssembly> 
+    <PublishTrimmed>False</PublishTrimmed> 
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks> 
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>8</WarningLevel>
@@ -18,6 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>8</WarningLevel>
+    <Optimize>True</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.10.0" />
@@ -53,4 +59,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+	<Target Name="PostBuild" AfterTargets="Build">
+		<Exec Command="start cmd /k ng serve --open" WorkingDirectory="C:\Users\serkan\OneDrive\Belgelerim\GitHub\ETicaretAPI\Presentation\eticaretapiclient" />
+		<Message Text="Derleme sonrası Angular build çalıştırıldı." Importance="high" />
+	</Target>
 </Project>

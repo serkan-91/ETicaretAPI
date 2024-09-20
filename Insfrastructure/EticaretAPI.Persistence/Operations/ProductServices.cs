@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using EticaretAPI.Application.Abstractions.Storage;
 using EticaretAPI.Application.Common.Dtos;
 using EticaretAPI.Application.Operations;

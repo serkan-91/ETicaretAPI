@@ -1,10 +1,11 @@
-import { Component, ElementRef, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+/* eslint-disable no-unused-vars */
+import { Component, Inject, OnInit, Output } from '@angular/core';
 import { BaseDialog } from '../base/base-dialogs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FileUploadOptions } from '../../services/common/file-upload/file-upload.component';
 import { ProductService } from '../../services/common/models/product.service';
 import { List_Product_Image } from '../../contracts/list_product_image';
-import { Observable, delay, map } from 'rxjs';
+import { Observable, delay, map, of } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { SpinnerType } from '../../base/base.component';
 import { DialogService } from '../../services/common/dialog.service';
@@ -34,7 +35,7 @@ export class SelectProductImageDialogComponent extends BaseDialog<SelectProductI
     isAdminPage: true,
     queryString: `id=${this.data}`
   }
-  images$: Observable<List_Product_Image[]>;
+  images$: Observable<List_Product_Image[]> = of([]);;
 
   ngOnInit(): void {
     this.getImages();
@@ -88,5 +89,5 @@ export class SelectProductImageDialogComponent extends BaseDialog<SelectProductI
 }
 
 export enum SelectProductImageState {
-  Close
+  Close = 0,
 }

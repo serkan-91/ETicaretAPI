@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { AlertifyService, MessageType, Position } from '../../admin/alertify.service';
@@ -19,38 +20,44 @@ import { List_Product_Image } from '../../../contracts/list_product_image';
 export class FileUploadComponent implements OnInit {
 
 
-  constructor(private _httpClientService: HttpClientService,
+  constructor(
+    private _httpClientService: HttpClientService,
     private _alertifyService: AlertifyService,
     private _toastrService: CustomToastrService,
     private _dialogService: DialogService,
     private _spinner: NgxSpinnerService,
-     ) { }
+  ) { }
 
-    ngOnInit(): void {
-      
-    }
-   
   public files: NgxFileDropEntry[] = [];
   public errorMessage: string = '';
   private maxFileSize = 20 * 1024 * 1024; // 20 MB
 
-  @Input() options: Partial<FileUploadOptions>;
+
+  @Input() options?: Partial<FileUploadOptions>;
   @Output() fileUploaded: EventEmitter<void> = new EventEmitter<void>(); // Dosya yüklendikten sonra tetiklenecek olay
 
-  public selectedFiles(files: NgxFileDropEntry[]) {
+
+  ngOnInit(): void {
+      this.test();
+  }
+  test() {
+    console.log('test');
+    this._spinner.hide(SpinnerType.BallAtom);  // Bu kullanımla uyarı ortadan kalkmalı
+  }
+    selectedFiles(files: NgxFileDropEntry[]) {
     this.files = files;
     const fileData: FormData = new FormData();
     let hasFileSizeError = false;
-     
+
     for (const file of files) {
       (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
         if (_file.size > this.maxFileSize) {
-     
+
           this.errorMessage = `${_file.name} cannot be bigger than 20 MB.`;
           hasFileSizeError = true;
           this._spinner.hide(SpinnerType.BallAtom);
           const message: string = `${_file.name} cannot be bigger than 20 MB `;
-          if (this.options.isAdminPage) {
+          if (this.options?.isAdminPage) {
             this._alertifyService.message(message, {
               dismissOthers: true,
               messageType: MessageType.Error,
@@ -62,9 +69,9 @@ export class FileUploadComponent implements OnInit {
               position: ToastrPosition.TopRight
             });
           }
-        } else { 
+        } else {
           fileData.append(_file.name, _file, file.relativePath);
-          this.errorMessage = ''; 
+          this.errorMessage = '';
         }
       });
     }
@@ -73,25 +80,25 @@ export class FileUploadComponent implements OnInit {
     if (hasFileSizeError) {
       return; // İşlemi iptal et
     }
-     
+
     this._dialogService.openDialog({
       componentType: FileUploadDialogComponent,
       data: FileUploadState.Yes,
-      afterClosed: () => { 
+      afterClosed: () => {
         const headers = new HttpHeaders()
 
         this._spinner.show(SpinnerType.BallAtom);
         this._httpClientService.post({
-          controller: this.options.controller,
-          action: this.options.action,
-          queryString: this.options.queryString,
+          controller: this.options?.controller,
+          action: this.options?.action,
+          queryString: this.options?.queryString,
           headers
-          
+
         }, fileData).subscribe({
           next: () => {
             const message: string = "Files have been uploaded successfully.";
-            this.fileUploaded.emit() 
-            if (this.options.isAdminPage) {
+            this.fileUploaded.emit()
+            if (this.options?.isAdminPage) {
               this._alertifyService.message(message, {
                 dismissOthers: true,
                 messageType: MessageType.Success,
@@ -105,11 +112,11 @@ export class FileUploadComponent implements OnInit {
             }
             this._spinner.hide(SpinnerType.BallAtom);
           },
-          error: (err) => {
+          error: () => {
             const message: string = "An unexpected error was encountered while uploading files.";
             this._spinner.hide(SpinnerType.BallAtom);
 
-            if (this.options.isAdminPage) {
+            if (this.options?.isAdminPage) {
               this._alertifyService.message(message, {
                 dismissOthers: true,
                 messageType: MessageType.Error,
@@ -126,7 +133,7 @@ export class FileUploadComponent implements OnInit {
       }
     });
   }
-  images$: Observable<List_Product_Image[]>;
+  images$?: Observable<List_Product_Image[]>;
 }
 
 export class FileUploadOptions {

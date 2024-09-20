@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, switchMap, throwError, timeout } from 'rxjs';
+import { Observable, catchError, switchMap, throwError    } from 'rxjs';
 import { CsrfService } from '../tokens/csrf-service.service';
 
 @Injectable({

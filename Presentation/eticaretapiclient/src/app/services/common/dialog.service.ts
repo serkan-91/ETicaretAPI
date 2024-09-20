@@ -10,7 +10,10 @@ export class DialogService {
 
   constructor(private _dialog : MatDialog) { }
 
-    openDialog(dialogParameters :  Partial<DialogParameters>): void {
+  openDialog(dialogParameters: Partial<DialogParameters>): void {
+    if (!dialogParameters.componentType) {
+      throw new Error('componentType is required');
+    }
     const dialogRef = this._dialog.open(dialogParameters.componentType, 
       {
         width:  dialogParameters.options?.width,
@@ -24,7 +27,7 @@ export class DialogService {
 
     dialogRef.afterClosed()
       .subscribe((result: FileUploadState) => {
-        if (result == FileUploadState.Yes) {
+        if (result === FileUploadState.Yes && dialogParameters.afterClosed) {
           dialogParameters.afterClosed();
         }
       })
@@ -34,9 +37,9 @@ export class DialogService {
 export class DialogParameters {
   enterAnimationDuration?: any = 500;
   exitAnimationDuration?: any = 500;
-  componentType: ComponentType<any>;
+  componentType?: ComponentType<any>;
   data: any;
-  afterClosed: () => void;
+  afterClosed: (() => void) | undefined;
   options?: Partial<DialogOptions> = new DialogOptions();
 }
 export class DialogOptions {

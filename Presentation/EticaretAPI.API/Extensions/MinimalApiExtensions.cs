@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using EticaretAPI.API.Helpers.Common;
-using EticaretAPI.Application.Common.Dtos;
 using EticaretAPI.Application.Operations;
 using EticaretAPI.Application.Repositories;
 using EticaretAPI.Application.RequestParameters;

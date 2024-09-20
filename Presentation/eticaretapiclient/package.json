@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=127.0.0.1",
+    "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -39,17 +40,42 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.2",
+    "@angular-eslint/builder": "18.3.1",
+    "@angular-eslint/eslint-plugin": "18.3.1",
+    "@angular-eslint/eslint-plugin-template": "18.3.1",
+    "@angular-eslint/schematics": "18.3.1",
+    "@angular-eslint/template-parser": "18.3.1",
     "@angular/cli": "~18.2.2",
     "@angular/compiler-cli": "^18.2.3",
+    "@eslint/js": "^9.10.0",
     "@types/jasmine": "~4.3.0",
     "@types/jquery": "^3.5.30",
-    "eslint": "^9.10.0",
+    "@typescript-eslint/eslint-plugin": "7.11.0",
+    "@typescript-eslint/parser": "7.11.0",
+    "angular-eslint": "18.3.1",
+    "eslint": "8.57.0",
+    "globals": "^15.9.0",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.4.5"
+    "typescript": "~5.4.5",
+    "typescript-eslint": "^8.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "@typescript-eslint"
+    ]
   }
 }

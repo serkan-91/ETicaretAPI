@@ -1,6 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
-import { BaseComponent } from '../../../base/base.component';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ListComponent } from './list/list.component';
 
 @Component({
@@ -8,13 +6,23 @@ import { ListComponent } from './list/list.component';
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent extends BaseComponent   {
-  constructor(spinner: NgxSpinnerService) {
-    super(spinner)
+export class ProductsComponent implements AfterViewInit    {
+  constructor( ) {
+    
   } 
-  @ViewChild(ListComponent) ListComponent: ListComponent
+  @ViewChild(ListComponent) ListComponent?: ListComponent
 
+  ngAfterViewInit() {
+    // ngAfterViewInit içinde ListComponent'e güvenle erişilebilir
+    if (this.ListComponent) {
+      this.ListComponent.GetProducts();
+    }
+  }
   createdProduct() {
-    this.ListComponent.GetProducts()
+    if(this.ListComponent) {
+      this.ListComponent.GetProducts();
+    } else {
+      console.error('ListComponent is not initialized or available yet.');
+    }
   }
 }

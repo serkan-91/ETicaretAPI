@@ -9,7 +9,7 @@ export class CsrfInterceptorService implements HttpInterceptor {
 
   constructor(private csrfService: CsrfService) { }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Yalnızca POST, PUT ve DELETE isteklerine CSRF token ekliyoruz
     if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
       return this.csrfService.getCsrfToken().pipe(

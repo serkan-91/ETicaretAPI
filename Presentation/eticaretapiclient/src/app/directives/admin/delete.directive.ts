@@ -33,9 +33,9 @@ export class DeleteDirective extends BaseComponent {
     img.height = 25;
     _renderer.appendChild(_element.nativeElement, img)
   }
-  @Input() id: string;
-  @Input() controller: string;
-  @Input() action: string;
+  @Input() id!: string;
+  @Input() controller?: string;
+  @Input() action?: string;
   @Output() callback: EventEmitter<any> = new EventEmitter();
 
   @HostListener('click')
@@ -75,7 +75,7 @@ export class DeleteDirective extends BaseComponent {
     
   }
 
-  @ViewChild('matButton', { static: true, read: ElementRef }) matdButton: ElementRef;
+  @ViewChild('matButton', { static: true, read: ElementRef }) matButton!: ElementRef;
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, afterClosed: any): void {
     const dialogRef = this.dialog.open(DeleteDialogComponent,
