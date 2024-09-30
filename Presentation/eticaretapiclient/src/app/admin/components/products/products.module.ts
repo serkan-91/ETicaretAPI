@@ -1,6 +1,5 @@
-import { CommonModule, NgFor } from '@angular/common';
-import { RouterModule } from '@angular/router';
-
+import { CommonModule  } from '@angular/common';
+import { RouterModule } from '@angular/router'; 
 import { ProductsComponent } from './products.component';
 import { CreateComponent } from './create/create.component';
 import { ListComponent } from './list/list.component';
@@ -16,7 +15,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DeleteButtonComponent } from '../../../WrapperComponents/delete-button/delete-button.component';
 import { DeleteDirective } from '../../../directives/admin/delete.directive';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSortModule } from '@angular/material/sort';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';   
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { FormsModule } from '@angular/forms';
   ],
   imports: [
     RouterModule.forChild([
-      { path: "", component: ProductsComponent },
+      { path: '', component: ProductsComponent },
     ]),
     CommonModule,
     MatButtonModule,
@@ -38,9 +39,12 @@ import { FormsModule } from '@angular/forms';
     MatPaginatorModule,
     MatIconModule,
     MatTableModule,
+    MatSortModule,
     DialogsModule,
     FontAwesomeModule,
-    FormsModule
+    FormsModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule, 
   ]
 })
 export class ProductsModule {

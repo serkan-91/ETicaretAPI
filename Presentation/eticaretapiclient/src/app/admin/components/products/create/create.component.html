@@ -1,15 +1,34 @@
-<mat-form-field appearance="fill" class="product-create">
-  <mat-label>Name</mat-label>
-  <input matInput #txtName>
-</mat-form-field>
-<mat-form-field appearance="fill" class="product-create">
-  <mat-label>Stock</mat-label>
-  <input matInput type="number" min="0" value="0" #txtStock>
-</mat-form-field>
-<mat-form-field appearance="fill" class="product-create">
-  <mat-label>Price</mat-label>
-  <input matInput type="number" min="0" value="0" #txtPrice>
-</mat-form-field>
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill" class="product-create">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Enter product name">
+    
+    <!-- Required error -->
+    <mat-error *ngIf="productForm.get('name')?.hasError('required')">
+      Name is required
+    </mat-error>
 
-<button mat-raised-button class="btn"  (click)="create(txtName, txtStock, txtPrice)">Create Product</button>
+    <!-- Minlength error -->
+    <mat-error *ngIf="productForm.get('name')?.hasError('minLength')">
+      Name must be at least 3 characters long
+    </mat-error>
+  </mat-form-field>
 
+  <mat-form-field appearance="fill" class="product-create">
+    <mat-label>Stock</mat-label>
+    <input matInput type="number" min="0" formControlName="stock" placeholder="Enter stock amount">
+    <mat-error *ngIf="productForm.get('stock')?.hasError('min')">
+      Stock must be at least 1
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="product-create">
+    <mat-label>Price</mat-label>
+    <input matInput type="number" min="0" formControlName="price" placeholder="Enter price">
+    <mat-error *ngIf="productForm.get('price')?.hasError('min')">
+      Price must be at least 0
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="!productForm.valid">Create Product</button>
+</form>

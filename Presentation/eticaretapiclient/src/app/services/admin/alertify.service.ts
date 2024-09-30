@@ -1,48 +1,54 @@
 import { Injectable } from '@angular/core';
-
-declare let alertify: any;
+declare var alertify: any;
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlertifyService {
-  message(message: string, options: Partial<AlertifyOptions>): void {
-    alertify.set('notifier', 'delay', options.delay);
-    alertify.set('notifier', 'position', options.position);
-    const msg = alertify[options.messageType || MessageType.Notify] as (msg: string) => void;
+  [x: string]: any;
+  success(arg0: string) {
+      throw new Error('Method not implemented.');
+  }
+  error(arg0: string) {
+      throw new Error('Method not implemented.');
+  }
+  constructor() { }
 
-    if (options.dismissOthers) {
-      alertify.dismissAll();
-    }
+  // message(message: string, messageType: MessageType, position: Position, delay: number = 3, dismissOthers: boolean = false)
+  message(message: string, options: Partial<AlertifyOptions>) {
+    const delay = options.delay ?? 3;  
+    const position = options.position ?? Position.BottomCenter;  
+    const messageType = options.messageType ?? 'message';  
 
-    msg(message);
+    alertify.set('notifier', 'delay', delay);
+    alertify.set('notifier', 'position', position); 
+    const msj = alertify[messageType](message);
+    if (options.dismissOthers)
+      msj.dismissOthers();
+
   }
 
-  dismiss(): void {
+  dissmiss() {
     alertify.dismissAll();
   }
 }
 
-export enum MessageType {
-  Error = 'error',
-  Message = 'message',
-  Notify = 'notify',
-  Success = 'success',
-  Warning = 'warning'
+export class AlertifyOptions {
+  messageType: MessageType = 'message';
+  position: Position = Position.BottomLeft;
+  delay: number = 3;
+  dismissOthers: boolean = false;
 }
+
+export type MessageType = 'error' | 'message' | 'notify' | 'success' | 'warning'
+ 
+    
 
 export enum Position {
-  TopRight = 'top-right',
-  TopCenter = 'top-center',
-  TopLeft = 'top-left',
-  BottomRight = 'bottom-right',
-  BottomCenter = 'bottom-center',
-  BottomLeft = 'bottom-left'
-}
-
-export class AlertifyOptions {
-  messageType: MessageType = MessageType.Message;
-  position: Position = Position.BottomLeft;
-  delay: number = 5;
-  dismissOthers: boolean = false;
+  TopCenter = "top-center",
+  TopRight = "top-right",
+  TopLeft = "top-left",
+  BottomRight = "bottom-right",
+  BottomCenter = "bottom-center",
+  BottomLeft = "bottom-left"
 }

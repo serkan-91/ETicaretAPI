@@ -16,14 +16,14 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   }
 
   m() {
-    this.alertify.message("Merhaba", {
-      messageType: MessageType.Success,
+    this.alertify.message('Merhaba', {
+      messageType: 'success',
       delay: 5,
       position: Position.TopRight
     })
   }
 
   d() {
-    this.alertify.dismiss();
+    this.alertify.dissmiss();
   }
 }

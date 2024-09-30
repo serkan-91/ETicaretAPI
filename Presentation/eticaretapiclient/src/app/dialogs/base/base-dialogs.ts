@@ -1,4 +1,4 @@
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef } from '@angular/material/dialog';
 
 export class BaseDialog<DialogComponent> {
   constructor(public _dialogRef: MatDialogRef<DialogComponent>) { }

@@ -1,8 +1,11 @@
 import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 import { ProductService } from '../../services/common/models/product.service';
-import { BaseComponent, SpinnerType } from '../../base/base.component';
+import { BaseComponent } from '../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FaIconService } from '../../services/common/fa-Icon.service';
+import { findIconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 declare let $: any
 
@@ -15,9 +18,9 @@ declare let $: any
   </mat-icon>
 </button>
 `,
-    styleUrls: ['./delete-button.component.css'],
+  styleUrls: ['./delete-button.component.css'],
+ 
 })
-
 export class DeleteButtonComponent extends BaseComponent {
     constructor(
         private faIconService: FaIconService,
@@ -26,14 +29,20 @@ export class DeleteButtonComponent extends BaseComponent {
         spinner: NgxSpinnerService
     ) {
         super(spinner);
-    }
-    faXmark = this.faIconService.faXmark;
+  }
+    faXmark: IconDefinition = findIconDefinition({ prefix: 'fas', iconName: 'xmark' });
 
-    @Input() id: string;
+
+  ngOnInit() 
+  {
+    this.faXmark = this.faIconService.faXmark;
+  }
+
+    @Input()
+    id!: string;
     @Output() callback: EventEmitter<any> = new EventEmitter();
 
     async onDeleteClick() {
-        this.showSpinner(SpinnerType.BallAtom)
         const td: HTMLImageElement = this.element.nativeElement.parentElement
         const tr = td.parentElement
 

@@ -20,18 +20,18 @@ export class ToastrOptions {
   position: ToastrPosition = ToastrPosition.TopRight;
 }
 export enum ToastrMessageType {
-  Success = "success",
-  Info = "info",
-  Warning = "warning",
-  Error = "error"
+  Success = 'success',
+  Info = 'info',
+  Warning = 'warning',
+  Error = 'error'
 }
 export enum ToastrPosition {
-  TopRight = "toast-top-right",
-  BottomRight = "toast-bottom-right",
-  BottomLeft = "toast-bottom-left",
-  TopLeft = "toast-top-Left",
-  TopFullWidth = "toast-top-full-width",
-  BottomFullWidth = "toast-bottom-full-width",
-  TopCenter = "toast-top-center",
-  BottomCenter = "toast-bottom-center"
+  TopRight = 'toast-top-right',
+  BottomRight = 'toast-bottom-right',
+  BottomLeft = 'toast-bottom-left',
+  TopLeft = 'toast-top-Left',
+  TopFullWidth = 'toast-top-full-width',
+  BottomFullWidth = 'toast-bottom-full-width',
+  TopCenter = 'toast-top-center',
+  BottomCenter = 'toast-bottom-center'
 }

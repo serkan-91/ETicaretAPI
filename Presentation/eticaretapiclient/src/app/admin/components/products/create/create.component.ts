@@ -1,53 +1,43 @@
-import { Component, Output, EventEmitter, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { BaseComponent, SpinnerType } from '../../../../base/base.component';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Create_Product } from '../../../../contracts/create_product';
-import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
 import { ProductService } from '../../../../services/common/models/product.service';
-import { FileUploadOptions } from '../../../../services/common/file-upload/file-upload.component';
+import { Product } from '../../../../contracts/list_product';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss' ]  
+  styleUrls: ['./create.component.css']
 })
-export class CreateComponent extends BaseComponent {
-  constructor(spiner: NgxSpinnerService, private productService: ProductService, private alertify: AlertifyService) {
-    super(spiner)
-  }
+export class CreateComponent  implements OnInit {
+  @Output() productCreated = new EventEmitter<Product>();
+  productForm!: FormGroup; 
 
-  @Output() createdProduct: EventEmitter<Create_Product> = new EventEmitter();
+  constructor(private fb: FormBuilder,
+              private productService: ProductService) { }
 
-  @Output() fileUploadOptions: Partial<FileUploadOptions> = {
-    action: "UploadProductImage",
-    controller: "products",
-    explanation: "The pictures drag and drop or choose",
-    isAdminPage: true,
-    accept: ".png, .jpg, .jpeg, .pdf, .mp4"
-  }
-
-  create(name: HTMLInputElement, stock: HTMLInputElement, price: HTMLInputElement) {
-    this.showSpinner(SpinnerType.BallAtom);  
-    const create_product: Create_Product = new Create_Product();
-    create_product.name = name.value;
-    create_product.stock = parseInt(stock.value);
-    create_product.price = parseFloat(price.value);
-
-    this.productService.create(create_product, () => {
-      this.hideSpinner(SpinnerType.BallAtom);  
-      this.alertify.message("Product has been added.", {
-        dismissOthers: true,
-        messageType: MessageType.Success,
-        position: Position.TopRight
-      });
-      this.createdProduct.emit(create_product);
-    }, errorMessage => {
-      this.hideSpinner(SpinnerType.BallAtom); // Hata durumunda spinner'ı gizle
-      this.alertify.message(errorMessage, {
-        dismissOthers: true,
-        messageType: MessageType.Error,
-        position: Position.TopRight
-      });
+  ngOnInit(): void {
+    this.productForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      stock: [0, [Validators.required, Validators.min(1)]],
+      price: [0, [Validators.required, Validators.min(0)]]
     });
-  }
-}
+  } 
+  onSubmit() {
+    if (this.productForm.valid) {
+      const product = this.productForm.value;
+      this.productService.create(product).subscribe((response: Product) => {
+        this.productCreated.emit(response); 
+        this.productForm.reset();
+
+      })
+    }
+    
+      this.productForm.reset({
+        name: "",
+        price: 1,
+        stock: 1
+      });
+    }
+  }  
+

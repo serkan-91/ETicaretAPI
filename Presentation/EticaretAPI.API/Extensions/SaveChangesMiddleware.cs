@@ -19,19 +19,25 @@ public class SaveChangesMiddleware
         // HTTP isteği işleniyor
         await _next(context).ConfigureAwait(false);
 
-        // Eğer değişiklik varsa SaveChangesAsync tetikleniyor
-        if (dbContext.ChangeTracker.HasChanges())
+        if (
+            context.Request.Method == HttpMethods.Post
+            || context.Request.Method == HttpMethods.Put
+            || context.Request.Method == HttpMethods.Delete
+        )
         {
-            try
+            if (dbContext.ChangeTracker.HasChanges())
             {
-                await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                Console.Write("veritabanina yazildi.");
-            }
-            catch (Exception ex)
-            {
-                // Hataları loglayın ya da handle edin
-                Console.WriteLine($"Error during SaveChanges: {ex.Message}");
-                throw;
+                try
+                {
+                    await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    Console.Write("veritabanina yazildi.");
+                }
+                catch (Exception ex)
+                {
+                    // Hataları loglayın ya da handle edin
+                    Console.WriteLine($"Error during SaveChanges: {ex.Message}");
+                    throw;
+                }
             }
         }
     }

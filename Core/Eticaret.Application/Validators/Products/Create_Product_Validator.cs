@@ -1,29 +1,19 @@
-﻿namespace EticaretAPI.Application.Validators.Products;
+﻿using EticaretAPI.Application.Features.Commands.Product.Create;
 
-public class Create_Product_Validator : AbstractValidator<VM_Create_Product>
+namespace EticaretAPI.Application.Validators.Products;
+
+public class CreateProductCommandRequestValidator : AbstractValidator<CreateProductCommandRequest>
 {
-    public Create_Product_Validator()
+    public CreateProductCommandRequestValidator()
     {
         RuleFor(p => p.Name)
             .NotEmpty()
-            .NotNull()
-            .WithMessage("product name must not be empty or null")
-            .MaximumLength(350)
-            .MinimumLength(3)
-            .WithMessage("Product name must be between 3 or 350 character");
+            .WithMessage("Product name must not be empty or null.")
+            .Length(3, 350)
+            .WithMessage("Product name must be between 3 and 350 characters.");
 
-        RuleFor(s => s.Stock)
-            .NotEmpty()
-            .NotNull()
-            .WithMessage("Stock must not be empty or null")
-            .Must(s => s >= 0)
-            .WithMessage("Stock not be negative");
+        RuleFor(s => s.Stock).GreaterThanOrEqualTo(0).WithMessage("Stock cannot be negative.");
 
-        RuleFor(p => p.Price)
-            .NotEmpty()
-            .NotNull()
-            .WithMessage("Price must not be empty or null")
-            .Must(p => p >= 0)
-            .WithMessage("Price not be negative");
+        RuleFor(p => p.Price).GreaterThanOrEqualTo(0).WithMessage("Price cannot be negative.");
     }
 }

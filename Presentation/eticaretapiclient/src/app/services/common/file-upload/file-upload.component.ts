@@ -5,19 +5,17 @@ import { CustomToastrService, ToastrMessageType, ToastrPosition } from '../../ui
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { DialogService } from '../dialog.service';
 import { FileUploadDialogComponent, FileUploadState } from '../../../dialogs/file-upload-dialog/file-upload-dialog.component';
-import { HttpHeaders } from '@angular/common/http';
 import { SpinnerType } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/internal/Observable';
-import { List_Product_Image } from '../../../contracts/list_product_image'; 
+import { ProductImage } from '../../../contracts/list_product_image'; 
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css']
 })
-export class FileUploadComponent implements OnInit {
-
+export class FileUploadComponent   {
 
   constructor(
     private _httpClientService: HttpClientService,
@@ -33,16 +31,8 @@ export class FileUploadComponent implements OnInit {
 
 
   @Input() options?: Partial<FileUploadOptions>;
-  @Output() fileUploaded: EventEmitter<void> = new EventEmitter<void>(); // Dosya yüklendikten sonra tetiklenecek olay
-
-
-  ngOnInit(): void {
-      this.test();
-  }
-  test() {
-    console.log('test');
-    this._spinner.hide(SpinnerType.BallAtom);  // Bu kullanımla uyarı ortadan kalkmalı
-  }
+  @Output() fileUploaded: EventEmitter<ProductImage[]> = new EventEmitter<ProductImage[]>();
+     
     selectedFiles(files: NgxFileDropEntry[]) {
     this.files = files;
     const fileData: FormData = new FormData();
@@ -59,17 +49,17 @@ export class FileUploadComponent implements OnInit {
           if (this.options?.isAdminPage) {
             this._alertifyService.message(message, {
               dismissOthers: true,
-              messageType: MessageType.Error,
+              messageType: 'success',
               position: Position.TopRight
             });
           } else {
-            this._toastrService.message(message, "Error", {
+            this._toastrService.message(message, 'Error', {
               messageType: ToastrMessageType.Error,
               position: ToastrPosition.TopRight
             });
           }
         } else {
-          fileData.append(_file.name, _file, file.relativePath);
+          fileData.append(_file.name, _file, file.relativePath);  
           this.errorMessage = '';
         }
       });
@@ -84,46 +74,25 @@ export class FileUploadComponent implements OnInit {
       componentType: FileUploadDialogComponent,
       data: FileUploadState.Yes,
       afterClosed: () => {
-        const headers = new HttpHeaders()
-
-        this._spinner.show(SpinnerType.BallAtom);
-        this._httpClientService.post({
+        this._httpClientService.post<FormData, ProductImage[]>({
           controller: this.options?.controller,
           action: this.options?.action,
-          queryString: this.options?.queryString,
-          headers
-
-        }, fileData).subscribe({
-          next: () => {
-            const message: string = "Files have been uploaded successfully.";
-            this.fileUploaded.emit()
+          queryString: `id=${this.options?.queryString}`
+        }, fileData)
+          .subscribe({
+            next: (data: ProductImage[]) => {
+            const message: string = 'Files have been uploaded successfully.';
+            this.fileUploaded.emit(data)
             if (this.options?.isAdminPage) {
               this._alertifyService.message(message, {
                 dismissOthers: true,
-                messageType: MessageType.Success,
+                messageType: 'success',
                 position: Position.TopRight
-              });
-            } else {
-              this._toastrService.message(message, "Başarılı", {
-                messageType: ToastrMessageType.Success,
-                position: ToastrPosition.TopRight
               });
             }
-            this._spinner.hide(SpinnerType.BallAtom);
-          },
-          error: () => {
-            const message: string = "An unexpected error was encountered while uploading files.";
-            this._spinner.hide(SpinnerType.BallAtom);
-
-            if (this.options?.isAdminPage) {
-              this._alertifyService.message(message, {
-                dismissOthers: true,
-                messageType: MessageType.Error,
-                position: Position.TopRight
-              });
-            } else {
-              this._toastrService.message(message, "Unsuccessful", {
-                messageType: ToastrMessageType.Error,
+            else {
+              this._toastrService.message(message, 'Success', {
+                messageType: ToastrMessageType.Success,
                 position: ToastrPosition.TopRight
               });
             }
@@ -132,7 +101,7 @@ export class FileUploadComponent implements OnInit {
       }
     });
   }
-  images$?: Observable<List_Product_Image[]>;
+  images$?: Observable<ProductImage[]>;
 }
 
 export class FileUploadOptions {

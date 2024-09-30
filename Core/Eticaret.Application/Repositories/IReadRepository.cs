@@ -33,7 +33,7 @@ public interface IReadRepository<T> : IRepository<T>
 
     Task<PagingResult<T>> GetPagedAsync(
         CancellationToken cancellationToken,
-        Paginations pagination,
+        Pagination pagination,
         bool tracking = true
     );
 }

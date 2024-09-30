@@ -10,7 +10,7 @@ export class DialogService {
 
   constructor(private _dialog : MatDialog) { }
 
-  openDialog(dialogParameters: Partial<DialogParameters>): void {
+  openDialog(dialogParameters: Partial<DialogParameters> ): void {
     if (!dialogParameters.componentType) {
       throw new Error('componentType is required');
     }
@@ -34,16 +34,16 @@ export class DialogService {
   }
 
 }
-export class DialogParameters {
-  enterAnimationDuration?: any = 500;
-  exitAnimationDuration?: any = 500;
-  componentType?: ComponentType<any>;
-  data: any;
+export class DialogParameters<T = unknown> {
+  enterAnimationDuration: number = 500;
+  exitAnimationDuration: number = 500;
+  componentType!: ComponentType<T>;
+  data: unknown;
   afterClosed: (() => void) | undefined;
   options?: Partial<DialogOptions> = new DialogOptions();
 }
 export class DialogOptions {
-  width?: string = "250px";
+  width?: string = '250px';
   height?: string;
   minWidth?: string ;
   position?: DialogPosition;

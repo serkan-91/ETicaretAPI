@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Product Images</h2>
-<mat-dialog-content>
-    <app-file-upload [options]="options" (fileUploaded)="getImages()" ></app-file-upload>
+<mat-dialog-content style="text-align:center">
+    <app-file-upload [options]="options" (fileUploaded)="onFileUploaded($event)"  ></app-file-upload>
     <ng-container *ngFor="let image of images$ | async">
         <mat-card #card class="product-image-card" appearance="outlined">
             <mat-card-header></mat-card-header>

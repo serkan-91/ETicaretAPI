@@ -8,7 +8,7 @@ import { BasketsComponent } from './baskets.component';
   imports: [
     CommonModule,
     RouterModule.forChild([
-      { path: "", component: BasketsComponent },
+      { path: '', component: BasketsComponent },
 
     ])
   ]

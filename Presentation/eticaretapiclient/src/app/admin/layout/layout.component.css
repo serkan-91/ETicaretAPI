@@ -15,4 +15,5 @@ mat-drawer-content {
 
 .admin-left {
   width: 200px;
+  height:contain;
 }

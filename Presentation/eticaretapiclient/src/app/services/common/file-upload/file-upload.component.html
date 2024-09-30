@@ -1,6 +1,6 @@
 <div class="center">
   <ngx-file-drop dropZoneLabel="Drop files here"
-  [accept]!="options?.accept"
+  [accept]="options?.accept || ''"
   (onFileDrop)="selectedFiles($event)"
   >
  

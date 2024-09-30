@@ -13,7 +13,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import $ from 'jquery';
 import { CommonModule } from '@angular/common';  // CommonModule'ü ekliyoruz
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { CsrfInterceptorService } from './services/interceptions/csrf-interceptor.service';
+import { CsrfInterceptorService } from './services/common/interceptors/csrf-interceptor.service';
+import { ErrorInterceptor } from './services/common/interceptors/ErrorInterceptor';
 
 @NgModule({
   declarations: [
@@ -34,13 +35,17 @@ import { CsrfInterceptorService } from './services/interceptions/csrf-intercepto
   ],
   providers: [
     {
-      provide: "baseUrl", useValue: "https://localhost:7116/api",
+      provide: 'baseUrl', useValue: 'https://localhost:7116/api',
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CsrfInterceptorService,
-      multi: true
-
+      multi: true 
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true 
     },
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync()

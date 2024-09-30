@@ -5,7 +5,7 @@ namespace EticaretAPI.Application.Repositories;
 public interface IWriteRepository<T> : IRepository<T>
     where T : BaseEntity
 {
-    Task AddAsync(T model, CancellationToken cancellationToken);
+    Task AddAsync(T model);
 
     Task AddRangeAsync(List<T> model, CancellationToken cancellationToken);
 
@@ -15,5 +15,6 @@ public interface IWriteRepository<T> : IRepository<T>
 
     void RemoveRangeAsync(List<T> datas);
 
-    void UpdateAsync(T model);
+    Task UpdateAsync(T model);
+    Task SaveChangesAsync();
 }

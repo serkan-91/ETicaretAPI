@@ -1,28 +1,18 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { ListComponent } from './list/list.component';
+import {  Component, ViewChild } from '@angular/core';  
+import { ListComponent } from './list/list.component'; 
+import { Product } from '../../../contracts/list_product';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent implements AfterViewInit    {
-  constructor( ) {
+export class ProductsComponent    {
+  @ViewChild(ListComponent) listComponent!: ListComponent;
+  addProduct(newProduct: Product) {
+    console.log(newProduct)
+    this.listComponent.addProduct(newProduct);
+  }
     
-  } 
-  @ViewChild(ListComponent) ListComponent?: ListComponent
+  }    
 
-  ngAfterViewInit() {
-    // ngAfterViewInit içinde ListComponent'e güvenle erişilebilir
-    if (this.ListComponent) {
-      this.ListComponent.GetProducts();
-    }
-  }
-  createdProduct() {
-    if(this.ListComponent) {
-      this.ListComponent.GetProducts();
-    } else {
-      console.error('ListComponent is not initialized or available yet.');
-    }
-  }
-}

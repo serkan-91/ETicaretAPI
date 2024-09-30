@@ -1,8 +1,11 @@
 <mat-drawer-container class="product-create">
   <mat-drawer mode="side" opened>
-    <app-create (createdProduct)="createdProduct()"></app-create>
+    <app-create  (productCreated)="addProduct($event)"></app-create>
   </mat-drawer>
   <mat-drawer-content>
-    <app-list></app-list>
+<app-list 
+  >
+   
+</app-list>
   </mat-drawer-content>
 </mat-drawer-container>

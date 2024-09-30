@@ -70,7 +70,7 @@ public class ReadRepository<T>(EticaretAPIDbContext _context) : IReadRepository<
 
     public async Task<PagingResult<T>> GetPagedAsync(
         CancellationToken cancellationToken,
-        Paginations pagination,
+        Pagination pagination,
         bool tracking = true
     )
     {
@@ -78,8 +78,9 @@ public class ReadRepository<T>(EticaretAPIDbContext _context) : IReadRepository<
         var totalCount = await query.CountAsync(cancellationToken).ConfigureAwait(false);
 
         var items = await query
-            .Skip((pagination.Page) * pagination.Size)
-            .Take(pagination.Size)
+            .OrderBy(x => x.Id) // Ensure this is a valid ordering, usually the primary key
+            .Skip((pagination.PageNumber) * pagination.PageSize)
+            .Take(pagination.PageSize)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 

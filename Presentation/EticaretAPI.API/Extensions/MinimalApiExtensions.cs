@@ -1,11 +1,14 @@
-﻿using System.Net;
-using EticaretAPI.API.Helpers.Common;
-using EticaretAPI.Application.Operations;
-using EticaretAPI.Application.Repositories;
-using EticaretAPI.Application.RequestParameters;
-using EticaretAPI.Application.ResponseParameters;
-using EticaretAPI.Application.ViewModels;
-using EticaretAPI.Domain.Entities;
+﻿using EticaretAPI.API.Helpers.Common;
+using EticaretAPI.Application.Features.Commands.Product.Create;
+using EticaretAPI.Application.Features.Commands.Product.Remove;
+using EticaretAPI.Application.Features.Commands.Product.Update;
+using EticaretAPI.Application.Features.Commands.ProductImageFile.RemoveProductImage;
+using EticaretAPI.Application.Features.Commands.ProductImageFile.Upload;
+using EticaretAPI.Application.Features.Queries.GetProductImage;
+using EticaretAPI.Application.Features.Queries.Product.GetAllProduct;
+using EticaretAPI.Application.Features.Queries.Product.GetByIdProduct;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,160 +16,125 @@ namespace EticaretAPI.API.Extensions;
 
 public static class MinimalApiExtensions
 {
-    public static void MapProductsEndPoint(this IEndpointRouteBuilder app)
-    {
-        app.MapPost(
-            "/api/products/CreateProduct",
-            async (VM_Create_Product model, IProductWriteRepository _productWriteRepository) =>
-            {
-                await _productWriteRepository
-                    .AddAsync(
-                        new Product
-                        {
-                            Name = model.Name,
-                            Price = model.Price,
-                            Stock = model.Stock,
-                        },
-                        cancellationToken: default
-                    )
-                    .ConfigureAwait(false);
+	public static void MapCrfTokenEndPoint(this IEndpointRouteBuilder app)
+	{
+		app.MapGet(
+			"/csrf-token",
+			(IAntiforgery antiforgery, HttpContext httpContext) =>
+			{
+				AntiforgeryTokenSet tokens = antiforgery.GetAndStoreTokens(httpContext);
+				return Results.Ok(new { csrfToken = tokens.RequestToken });
+			}
+		);
+	}
 
-                return Results.StatusCode((int)HttpStatusCode.Created);
-            }
-        );
+	public static void MapProductsEndPoint(this IEndpointRouteBuilder app)
+	{
+		app.MapGet(
+			"/api/products/GetProductsPaging",
+			async (
+				[FromServices] IMediator _mediator,
+				[AsParameters] GetAllProductQueryRequest request
+			) =>
+			{
+				return Results.Ok(await _mediator.Send(request, cancellationToken: default));
+			}
+		);
 
-        app.MapPut(
-            "/api/products/UpdateProduct",
-            (VM_Update_Product model, IProductServices _productService) =>
-            {
-                _productService.UpdateProductAsync(model);
-                return Results.StatusCode((int)HttpStatusCode.OK);
-            }
-        );
+		app.MapGet(
+			"/api/products/GetProduct",
+			async (
+				[AsParameters] GetByIdProductQueryRequest request,
+				[FromServices] IMediator _mediator,
+				CancellationToken cancellationToken
+			) =>
+			{
+				return Results.Ok(await _mediator.Send(request, cancellationToken));
+			}
+		);
 
-        app.MapDelete(
-            "/api/products/DeleteProduct/{id}",
-            async (
-                string id,
-                IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                await _productService
-                    .DeleteProductAsync(id, cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.StatusCode((int)HttpStatusCode.OK);
-            }
-        );
+		app.MapPost(
+			"/api/products/CreateProduct",
+			async (
+				[FromServices] IMediator _mediator, // FromServices ile Mediator DI'dan çekilir
+				[FromBody] CreateProductCommandRequest request, // Body'den bağlanır
+				[FromServices] IValidator<CreateProductCommandRequest> validator
+			) =>
+			{
+				var validationResult = await validator.ValidateAsync(request);
+				if (!validationResult.IsValid)
+				{
+					return Results.BadRequest(validationResult.Errors);
+				}
+				return Results.Ok(await _mediator.Send(request));
+			}
+		);
 
-        app.MapGet(
-            "/api/products/GetProduct",
-            async (
-                string id,
-                IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                Product product = await _productService
-                    .GetProductByIdAsync(id, cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.Ok(product);
-            }
-        );
+		app.MapPut(
+			"/api/products/UpdateProduct",
+			async (
+				[FromServices] IMediator _mediator,
+				[FromBody] UpdateProductCommandRequest model
+			) =>
+			{
+				var response = await _mediator.Send(model);
+				return Results.StatusCode(response.StatusCode);
+			}
+		);
 
-        app.MapGet(
-            "/api/products/GetProducts",
-            async (IProductServices _productService, CancellationToken cancellationToken) =>
-            {
-                List<Product> products = await _productService
-                    .GetProductsAsync(cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.Ok(products);
-            }
-        );
+		app.MapDelete(
+			"/api/products/DeleteProduct/{id}",
+			async (
+				[FromServices] IMediator _mediator,
+				[AsParameters] RemoveProductCommandRequest request,
+				CancellationToken cancellationToken
+			) =>
+			{
+				var response = await _mediator.Send(request, cancellationToken);
+				return Results.StatusCode(response.StatusCode);
+			}
+		);
 
-        app.MapGet(
-            "/api/products/GetProductsPaging",
-            async (
-                [FromQuery] int page,
-                [FromQuery] int size,
-                [FromServices] IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                var pagination = new Paginations { Page = page, Size = size }; // Parametrelerden Pagination nesnesi oluşturuyoruz
+		app.MapGet(
+			"/api/products/GetProductImages/{Id}",
+			async (
+				[FromServices] IMediator _mediator,
+				[AsParameters] GetProductImageQueryRequest request,
+				CancellationToken cancellationToken
+			) =>
+			{
+				return Results.Ok(await _mediator.Send(request));
+			}
+		);
 
-                PagingResult<Product> products = await _productService
-                    .GetProductsPagingAsync(pagination, cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.Ok(products);
-            }
-        );
+		app.MapDelete(
+			"/api/products/DeleteProductImage/{Id}",
+			async (
+				[FromServices] IMediator Mediator,
+				[AsParameters] RemoveProductImageCommandRequest request,
+				CancellationToken cancellationToken
+			) =>
+			{
+				return Results.Ok(await Mediator.Send(request));
+			}
+		);
 
-        app.MapGet(
-            "/api/products/GetProductImages/{id}",
-            static async (
-                string id,
-                IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                var images = await _productService
-                    .GetProductImagesAsync(id, cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.Ok(images);
-            }
-        );
-
-        app.MapDelete(
-            "/api/products/DeleteProductImage/{id}",
-            async (
-                string id,
-                string imageId,
-                IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                await _productService
-                    .DeleteProductImageAsync(id, imageId, cancellationToken)
-                    .ConfigureAwait(false);
-                return Results.Ok();
-            }
-        );
-
-        app.MapPost(
-            "/api/products/UploadProductImage",
-            async (
-                HttpContext context,
-                string id,
-                [FromForm] IFormFileCollection files,
-                IProductServices _productService,
-                CancellationToken cancellationToken
-            ) =>
-            {
-                ArgumentNullException.ThrowIfNull(files, nameof(files));
-
-                UpladImageResults result = await _productService
-                    .UploadProductFilesAsync(
-                        id,
-                        FileService.ConvertToFileDtos(files),
-                        cancellationToken
-                    )
-                    .ConfigureAwait(false);
-                return Results.Ok(result);
-            }
-        );
-    }
-
-    public static void MapCrfTokenEndPoint(this IEndpointRouteBuilder app)
-    {
-        app.MapGet(
-            "/csrf-token",
-            (IAntiforgery antiforgery, HttpContext httpContext) =>
-            {
-                AntiforgeryTokenSet tokens = antiforgery.GetAndStoreTokens(httpContext);
-                return Results.Ok(new { csrfToken = tokens.RequestToken });
-            }
-        );
-    }
+		app.MapPost(
+			"/api/products/UploadProductImage",
+			async (
+				IMediator _mediator,
+				[FromQuery] string id, // Route'dan Id alıyoruz
+				[FromForm] IFormFileCollection files,
+				CancellationToken cancellationToken
+			) =>
+			{
+				var request = new UploadProductImageCommandRequest
+				{
+					Id = id,
+					Files = FileService.ConvertToFileDtos(files),
+				};
+				return Results.Ok(await _mediator.Send(request, cancellationToken));
+			}
+		);
+	}
 }

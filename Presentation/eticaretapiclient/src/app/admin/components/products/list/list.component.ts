@@ -1,94 +1,158 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, inject, AfterViewInit, OnInit } from '@angular/core';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatTableDataSource } from '@angular/material/table';
-import { List_Product } from '../../../../contracts/list_product';
-import { ProductService } from '../../../../services/common/models/product.service';
-import { BaseComponent, SpinnerType } from '../../../../base/base.component';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { AlertifyService, MessageType, Position } from '../../../../services/admin/alertify.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { PagingResult, Product } from '../../../../contracts/list_product';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FaIconService } from '../../../../services/common/fa-Icon.service';
-import { DialogService } from '../../../../services/common/dialog.service';
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+import { MatSort, Sort } from '@angular/material/sort';
+import { DialogParameters, DialogService } from '../../../../services/common/dialog.service';
 import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
+import { AlertifyService, Position } from '../../../../services/admin/alertify.service';
+import { BaseComponent } from '../../../../base/base.component';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ProductService } from '../../../../services/common/models/product.service';
+import { FileUploadOptions } from '../../../../services/common/file-upload/file-upload.component'; 
+import { startWith, timeout } from 'rxjs';
 
 @Component({
   selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.css'],
+  templateUrl: './list.component.html'
 })
+export class ListComponent extends BaseComponent implements OnInit, AfterViewInit {
+  fileUploadOptions: Partial<FileUploadOptions> = {
+    action: 'UploadProductImage',
+    controller: 'products',
+    explanation: 'The pictures drag and drop or choose',
+    isAdminPage: true,
+    accept: '.png, .jpg, .jpeg, .pdf, .mp4'
+  }
 
-export class ListComponent extends BaseComponent implements OnInit {
+  private _liveAnnouncer = inject(LiveAnnouncer);
 
+  @Output() pageChange = new EventEmitter<PageEvent>(); // Emit page change events
   displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'photos', 'edit', 'delete'];
-  dataSource = new MatTableDataSource<List_Product>([]);
+    ProductModel?: (PagingResult<Product>) 
+  dataSource: MatTableDataSource<Product> = new MatTableDataSource<Product>();
+  isLoadingResults = true; // Veriler yüklenirken true olacak
+  isRateLimitReached = false; // Rate limit hatası alınırsa true olacak
+  totalCount = 0;  // Toplam veri sayısı
+  pageSize = 5;    
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
+  faXmark!: IconDefinition;
+  faPen!: IconDefinition;
+  faImage!: IconDefinition;
+  @Output() imageDialogEvent = new EventEmitter<string>();  // string parametre ile EventEmitter oluşturuyoruz
+    
   constructor(
-    _spinner: NgxSpinnerService,
-    private productService: ProductService,
-    private alertifyService: AlertifyService,
     private faIconService: FaIconService,
-    private _dialogService: DialogService
-  ) {
+    private dialogService: DialogService,
+    private alertify: AlertifyService,
+    private productService: ProductService,
+    _spinner: NgxSpinnerService) {
     super(_spinner);
   }
- 
-  faXmark = this.faIconService.faXmark;
-  faPen = this.faIconService.faPen;
-  faImage = this.faIconService.faImage;
+  ngOnInit(): void {
+    this.loadProducts(0, this.pageSize);  // İlk yüklemede ürünleri getir
+  }
 
- 
-  GetProducts() {
-    this.hideSpinner(SpinnerType.BallAtom)
-    this.productService.read(
-      this.paginator ? this.paginator.pageIndex : 0,
-      this.paginator ? this.paginator.pageSize : 5,
-      () => this.hideSpinner(SpinnerType.BallAtom),
-      errorMessage => this.alertifyService.message(errorMessage, {
-        dismissOthers: true,
-        messageType: MessageType.Error,
-        position: Position.TopRight
-      })
-    ).subscribe({
-      next: (allProducts: { totalCount: number; items: List_Product[] }) => {
-        this.dataSource = new MatTableDataSource<List_Product>(allProducts.items);
-        this.paginator.length = allProducts.totalCount;
-      },
-      error: (error) => {
-        console.error(error);
-      }
+  ngAfterViewInit() {
+    this.faXmark = this.faIconService.faXmark;
+    this.faPen = this.faIconService.faPen;
+    this.faImage = this.faIconService.faImage;
+
+    this.paginator.page.subscribe(() => {
+      this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+    });
+
+    this.sort.sortChange.subscribe(() => {
+      this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
     });
   }
 
-  addProductImageDialog(id: string) {
-    this._dialogService.openDialog({
+  trackById(item: any) {
+    return item.id;
+  }
+
+
+  productImagesDialog(id: string) {
+    const imageDialogParams: Partial<DialogParameters> = {
       componentType: SelectProductImageDialogComponent,
-      enterAnimationDuration: 600,
-      exitAnimationDuration: 600,
-      data: id,
+      data: { id },
+      enterAnimationDuration: 500,
+      exitAnimationDuration: 500,
       options: {
-        minWidth: '50vw'
+        minWidth: '1200px'
       }
-    });
+    }
+    this.dialogService.openDialog(imageDialogParams);
   }
 
-  delete(event: { srcElement: HTMLImageElement; }) {
-    const parent = event.srcElement.parentElement?.parentElement?.parentElement;
+  addProduct(newProduct: Product) {
+    const currentData = this.dataSource.data;
+    currentData.push(newProduct);
+    this.dataSource.data = currentData;
+    this.totalCount += 1;
+    this.paginator.length = this.totalCount;
+    if (this.totalCount > this.paginator.pageSize * (this.paginator.pageIndex + 1)) {
+      // Eğer toplam veri sayısı mevcut sayfa boyutunu aşıyorsa, bir sonraki sayfaya geçiyoruz
+      this.paginator.nextPage();
+    }
+    // Paginator'da sayfa değişiklikleri olduğunda ürünleri yeniden yükleyelim
+    this.paginator.page.subscribe(() => {
+      this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+    });
+  }
+   
+  onItemDeleted(deletedItemId: string) {
+    // setTimeout fonksiyonunu kullanarak işlemi 500ms geciktiriyoruz
+    setTimeout(() => {
+      const deletedData = this.dataSource.data.filter(item => item.id !== deletedItemId);
+      this.dataSource.data = deletedData;
+      this.totalCount -= 1;
+      this.paginator.length = this.totalCount;
 
+      // Eğer sayfadaki tüm ürünler silinmişse, önceki sayfaya dönüyoruz
+      if (deletedData.length === 0 && this.paginator.hasPreviousPage()) {
+        this.paginator.previousPage();
+      } else {
+        // Mevcut sayfadaki ürünleri yeniden yüklüyoruz
+        this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+      }
 
-    if (parent) {
-      $(parent).fadeOut(2000);
+      // paginator.page olayını dinleyerek sayfa değişikliklerinde ürünleri yeniden yüklüyoruz
+      this.paginator.page.subscribe(() => {
+        this.loadProducts(this.paginator.pageIndex, this.paginator.pageSize);
+      });
+    }, 500);  // 500ms gecikme
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
     }
   }
-
-  onDeleteClick() {
-    this.GetProducts();
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  pageChanged() {
-    this.GetProducts();
-  }
-  async ngOnInit() {
-    this.GetProducts();
+  loadProducts(pageIndex: number, pageSize: number): void {
+    this.isLoadingResults = true;
+    this.productService.read(pageIndex, pageSize, false).subscribe(response => {
+      this.dataSource.data = response.pagingResult.items;
+      this.totalCount = response.pagingResult.totalCount;
+      this.sort.active,
+       this.sort.direction,
+       this.paginator.length = this.totalCount;
+      this.isLoadingResults = false;
+    });
   }
 }
+

@@ -1,42 +1,39 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Renderer2, ViewChild, inject } from '@angular/core'; 
+import { Directive, ElementRef, Input, Renderer2, inject, HostListener, EventEmitter, Output } from '@angular/core';
 import { DeleteDialogComponent, DeleteState } from '../../dialogs/delete-dialog/delete-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClientService } from '../../services/common/http-client.service';
-import { AlertifyService, MessageType, Position } from '../../services/admin/alertify.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { BaseComponent, SpinnerType } from '../../base/base.component';
+import { AlertifyService } from '../../services/admin/alertify.service';
+import { BaseComponent } from '../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DialogService } from '../../services/common/dialog.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Directive({
   selector: '[appDelete]',
 })
-
 export class DeleteDirective extends BaseComponent {
-  @Input() color: string = 'primary'; // Varsayılan renk
-  readonly dialog = inject(MatDialog);
+  @Input() id!: string; 
+  @Input() controller?: string;  
+  @Input() action?: string;  
+  @Output() itemDeleted: EventEmitter<string> = new EventEmitter<string>();   
 
+  readonly dialog = inject(MatDialog);
   constructor(
     private _element: ElementRef,
     private _httpClientService: HttpClientService,
     private _renderer: Renderer2,
-    private _alertify: AlertifyService,
     private _dialogService: DialogService,
-    _spinmner: NgxSpinnerService
-
+    _spinner: NgxSpinnerService
   ) {
-    super(_spinmner);
-    const img = _renderer.createElement("img");
-    img.setAttribute("src", "/assets/delete.png");
-    img.setAttribute("style", "cursor: pointer; transition: opacity 0.3s; opacity: 0.6;"); // Geçiş efekti eklendi
-    img.with = 25;
+    super(_spinner);
+    // İkonu oluştur ve elemente ekle
+    const img = _renderer.createElement('img');
+    img.setAttribute('src', '/assets/delete.png');
+    img.setAttribute('style', 'cursor: pointer; transition: opacity 0.3s; opacity: 0.6;');
+    img.width = 25;
     img.height = 25;
-    _renderer.appendChild(_element.nativeElement, img)
+    _renderer.appendChild(_element.nativeElement, img);
   }
-  @Input() id!: string;
-  @Input() controller?: string;
-  @Input() action?: string;
-  @Output() callback: EventEmitter<any> = new EventEmitter();
 
   @HostListener('click')
   async onClick() {
@@ -50,49 +47,25 @@ export class DeleteDirective extends BaseComponent {
         }, this.id)
           .subscribe({
             next: () => {
-              this.callback.emit();
-              this._alertify.message(
-                "Product has been deleted successfully", {
-                dismissOthers: true,
-                messageType: MessageType.Success,
-                position: Position.TopRight
-              });
-            },
-            error: (errorResponse: HttpErrorResponse) => {
-              this._alertify.message(
-                "An error occurred while attempting to delete the product", {
-                dismissOthers: true,
-                messageType: MessageType.Error,
-                position: Position.TopCenter
-              });
-              console.error(errorResponse);
-              this.hideSpinner(SpinnerType.BallAtom);
+              this.fadeOutRow();   
+              this.itemDeleted.emit(this.id);   
             }
-          })
+          });
       }
-
     });
-    
+  } 
+  private fadeOutRow() {
+    const rowElement = this._element.nativeElement.closest('mat-row');
+    if (rowElement) {
+      this._renderer.setStyle(rowElement, 'transition', 'opacity 0.5s ease');
+      this._renderer.setStyle(rowElement, 'opacity', '0');
+
+      setTimeout(() => {
+        this._renderer.removeChild(rowElement.parentNode, rowElement);
+      }, 500);
+    }
   }
 
-  @ViewChild('matButton', { static: true, read: ElementRef }) matButton!: ElementRef;
-
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, afterClosed: any): void {
-    const dialogRef = this.dialog.open(DeleteDialogComponent,
-      {
-        width: '250px',
-        enterAnimationDuration: enterAnimationDuration,
-        exitAnimationDuration: exitAnimationDuration,
-        data: DeleteState.Yes
-      });
-
-    dialogRef.afterClosed()
-      .subscribe((result: DeleteState) => {
-        if (result == DeleteState.Yes) {
-          afterClosed();
-        }
-      })
-  }
   @HostListener('mouseenter') onMouseEnter() {
     this.setOpacity(1);
   }
@@ -108,3 +81,4 @@ export class DeleteDirective extends BaseComponent {
     }
   }
 }
+ 

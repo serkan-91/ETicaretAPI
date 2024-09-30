@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { Create_Product } from '../../../contracts/create_product';
-import { HttpErrorResponse } from '@angular/common/http';
-import { List_Product } from '../../../contracts/list_product';
+import { Product, ProductsResponse } from '../../../contracts/list_product';
 import { BaseComponent } from '../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
-import { List_Product_Image } from '../../../contracts/list_product_image';
+import { ProductImage } from '../../../contracts/list_product_image';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,86 +17,50 @@ export class ProductService extends BaseComponent {
   ) {
     super(_spinner);
   }
+ 
 
-  create(
-    product: Create_Product,
-    successCallBack?: () => void,
-    errorCallBack?: (errorMessage: string) => void
-  ) {
-    this.httpClientService.post({
-      controller: "products",
-      action: "CreateProduct"
-    }, product)
-      .subscribe({
-        next: () => {
-          if (successCallBack) {
-            successCallBack();
-          }
-        },
-        error: (error) => {
-          const _error = error.error as Array<{ key: string, value: Array<string> }>;
-          let message = "";
-          if (_error && Array.isArray(_error)) {
-            _error.forEach((_v) => {
-              _v.value.forEach((v) => {
-                message += `${v}<br>`;
-              });
-            });
-          } else {
-            message = error.message;
-          }
-          if (errorCallBack) {
-            errorCallBack(message);
-          }
-        }
-      });
-  }
-
-  read(page: number = 0, size: number = 5, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Observable<{ totalCount: number; items: List_Product[] }> {
-    const observableData: Observable<{ totalCount: number; items: List_Product[] }> = this.httpClientService.get<{ totalCount: number; items: List_Product[] }>({
-      controller: "products",
-      action: "GetProductsPaging",
-      queryString: `page=${page}&size=${size}`
+  read(pageNumber: number = 0, pageSize: number = 5, isSpinnerActive: boolean = true ): Observable<ProductsResponse> {
+    const queryString = `pageNumber=${pageNumber}&pageSize=${pageSize}`; 
+    const headers = new HttpHeaders({
+      'isAdmin': 'true',
+      'skipSpinner': String(!isSpinnerActive)
     });
-
-    // Subscribe işlemi ile veriyi yakalıyoruz
-    observableData.subscribe({
-      next: () => {
-        // Başarılı geri dönüş aldığında callback fonksiyonunu çalıştır
-        if (successCallBack) {
-          successCallBack(); // Eğer bir veri işlemek istiyorsanız, burada data'yı da kullanabilirsiniz
-        }
+    return this.httpClientService.get<ProductsResponse>({
+      controller: 'products',
+      action: 'GetProductsPaging',
+      queryString: queryString,
+      headers: headers
+    });  
+  }
+  create(product: Create_Product): Observable<Product> {
+    return this.httpClientService.post<Create_Product, Product>(
+      {
+        controller: 'products',
+        action: 'CreateProduct'
       },
-      error: (errorResponse: HttpErrorResponse) => {
-        // Hata durumunda errorCallBack fonksiyonunu çalıştır
-        if (errorCallBack) {
-          errorCallBack(errorResponse.message);
-        }
-      }
-    });
-
-    // Observable döndürüyoruz, böylece başka bileşenler de bu veriyi dinleyebilir
-    return observableData;
+      product
+    );
   }
+
 
   delete({ id }: { id: string; successCallBack?: () => void; errorCallBack?: () => void; }): void {
     this.httpClientService.delete<unknown>({
-      controller: "products",
-      action: "DeleteProduct"
+      controller: 'products',
+      action: 'DeleteProduct'
     }, id);
   }
   deleteImage(id: string, imageId: string)  {
   return  this.httpClientService.delete({
-    controller: "products",
-      action: "DeleteProductImage",
+    controller: 'products',
+      action: 'DeleteProductImage',
       queryString: `imageId=${imageId}`
     },id)
   }
 
-  readImages(id: string): Observable<List_Product_Image[]> {
-    return this.httpClientService.get<List_Product_Image[]>({
-      controller: "products",
-      action: "GetProductImages"
+  readImages(id: string): Observable<ProductImage[]> {
+    return this.httpClientService.get<ProductImage[]>({
+      controller: 'products',
+      action: 'GetProductImages'
     }, id);
   }
 }

@@ -1,10 +1,11 @@
-export class List_Product {
+export class Product {
   id!: string;
   name?: string;
   stock?: number;
   price?: number;
   createdDate?: Date;
   updatedDate?: Date;
+    isDeleted?: boolean;
 }
 export class Pagination {
   page: number;
@@ -14,4 +15,13 @@ export class Pagination {
     this.page = page;
     this.size = size;
   }
+}
+export interface PagingResult<T> {
+  items: T[];
+  totalCount: number;
+}
+
+export interface ProductsResponse {
+  pagingResult: PagingResult<Product>;
+  items: Product[]; // Ekstra kolaylık sağlamak için
 }
