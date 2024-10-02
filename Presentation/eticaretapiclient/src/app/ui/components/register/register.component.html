@@ -7,7 +7,7 @@
         </div>
         <div class="card-body p-4">
             <!--suppress AngularUndefinedBinding -->
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
                 <div class="mb-3">
                     <label for="name" class="form-label">Ad Soyad</label>
                     <div class="input-group">

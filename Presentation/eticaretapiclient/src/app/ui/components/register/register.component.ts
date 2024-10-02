@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {User} from "@app/entities/user";
 
 @Component({
   selector: 'app-register',
@@ -42,10 +43,10 @@ export class RegisterComponent {
     return null;
   }
 
-  onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Form Submitted!', this.registerForm.value);
-    }
+  onSubmit(data:User) {
+    if (this.registerForm.valid) { 
+      console.log('Form Submitted!', data);
+  }
   }
 }
 

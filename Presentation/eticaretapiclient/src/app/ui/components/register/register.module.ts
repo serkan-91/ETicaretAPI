@@ -16,6 +16,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     RouterModule.forChild([
       { path: '', component: RegisterComponent }
     ])
-   ]
+   ],
+    exports:
+  [
+  ReactiveFormsModule
+  ]
  })
 export class RegisterModule { }

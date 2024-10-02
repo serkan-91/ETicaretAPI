@@ -1,8 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Create_Product } from '../../../../contracts/create_product';
-import { ProductService } from '../../../../services/common/models/product.service';
-import { Product } from '../../../../contracts/list_product';
+import { ProductService } from '@app/services/common/models/product.service';
+import { Product } from "@app/contracts/list_product";
 
 @Component({
   selector: 'app-create',
