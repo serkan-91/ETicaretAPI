@@ -7,14 +7,13 @@ import { RegisterModule } from './register/register.module';
 
 @NgModule({
   declarations: [
-
   ],
   imports: [
     CommonModule,
     ProductsModule,
     BasketsModule,
     HomeModule,
-    RegisterModule
+    RegisterModule 
   ]
 })
 export class ComponentsModule { }

@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EticaretAPI.Persistence", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EticaretAPI.API", "Presentation\EticaretAPI.API\EticaretAPI.API.csproj", "{5A968174-D0EC-4A2B-8F35-415BF6AF0847}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eticaretapiclient", "Presentation\eticaretapiclient\eticaretapiclient.esproj", "{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{767AF1F2-A0FA-4D56-B86E-9D3DA428A7B0}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -52,12 +50,6 @@ Global
 		{5A968174-D0EC-4A2B-8F35-415BF6AF0847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A968174-D0EC-4A2B-8F35-415BF6AF0847}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A968174-D0EC-4A2B-8F35-415BF6AF0847}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,7 +60,6 @@ Global
 		{147AD96C-62E1-4A72-B223-62A199C07A7B} = {40DDAA1B-2E0B-4C5D-9929-A9F6146EE4BA}
 		{5D70819A-07A2-4685-BC0E-2ABFC1482A3C} = {40DDAA1B-2E0B-4C5D-9929-A9F6146EE4BA}
 		{5A968174-D0EC-4A2B-8F35-415BF6AF0847} = {98115BA2-A59D-41CB-8530-A2DE579B75A7}
-		{8E058D65-162F-4BD1-9FFA-D66F09AF4F5D} = {98115BA2-A59D-41CB-8530-A2DE579B75A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {11206D3B-C14E-4876-BA15-3099FFB4C9AE}

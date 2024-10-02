@@ -7,4 +7,12 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\eticaretclient\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="src\app\ui\components\register\register.component.html" />
+    <None Remove="src\typing.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptConfiguration Include="src\app\ui\components\register\register.component.html" />
+    <TypeScriptConfiguration Include="src\typing.d.ts" />
+  </ItemGroup>
 </Project>
