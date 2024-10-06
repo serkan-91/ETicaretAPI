@@ -1,0 +1,40 @@
+<p>login works!</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="card-title mb-0">Giriş Yap</h3>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+            <div class="mb-3">
+              <div class="input-group">
+                <input type="username" class="form-control" id="username" formControlName="username" placeholder="Kullanıcı Adı & Email" required autocomplete="username">
+              </div>
+              <small *ngIf="loginForm.get('username')?.touched">
+                <small *ngIf="loginForm.get('username')?.hasError('required')" class="text-danger">Bu alan bos birakilamaz.</small>
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <div class="input-group">
+                <input type="password" class="form-control" id="password" formControlName="password" placeholder="Şifre" required>
+              </div>
+              <small *ngIf="loginForm.get('password')?.touched">
+                <small *ngIf="loginForm.get('password')?.hasError('required')" class="text-danger">Şifre boş olamaz</small>
+                <small *ngIf="loginForm.get('password')?.hasError('minlength') || loginForm.get('password')?.hasError('maxlength')" class="text-danger">Şifre 6-50 karakter arasi olmalidir.</small>
+                  <small *ngIf="loginForm.get('password')?.hasError('pattersn')
+                                        && !(loginForm.get('password')?.hasError('maxlength') || loginForm.get('password')?.hasError('minlength'))"
+                         class=" text-danger ">
+                      Şifre en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.
+                  </small>
+              </small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Giriş Yap</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
