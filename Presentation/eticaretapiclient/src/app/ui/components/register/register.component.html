@@ -1,86 +1,125 @@
 <div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white text-center">
-          <h3 class="card-title mb-0">Kayıt Ol</h3>
-        </div>
-        <div class="card-body p-4">
-            <!--suppress AngularUndefinedBinding -->
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Ad Soyad</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="name" formControlName="name" placeholder="Ad Soyad"
-                               required autocomplete="name">
-                    </div>
-                    <div *ngIf="registerForm.get('name')?.touched">
-                        <small *ngIf="registerForm.get('name')?.hasError('required')" class="text-danger">
-                            Ad Soyad gerekli.
-                        </small>
-                        <small *ngIf="!registerForm.get('name')?.hasError('required') && registerForm.get('name')?.hasError('minlength') || registerForm.get('name')?.hasError('maxlength')"
-                               class=" text-danger">
-                            Ad Soyad 3-50 karakter arasi olabilir
-                        </small>
-                    </div>
-
-                    <label for="username" class="form-label">Kullanıcı Adı</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="username" formControlName="username"
-                               placeholder="Kullanıcı Adı" required autocomplete="username">
-                    </div>
-                    <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-                           class="text-danger">
-                        Kullanıcı Adı gerekli.
-                    </small>
-                    <small *ngIf="!registerForm.get('username')?.hasError('required') && registerForm.get('username')?.hasError('minlength') || registerForm.get('username')?.hasError('maxlength')"
-                           class=" text-danger">
-                        Kullanıcı Adı 3-50 karakter arasi olabilir
-                    </small>
-
-                    <label for="email" class="form-label">Email</label>
-                    <div class="input-group">
-                        <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email"
-                               required autocomplete="email">
-                    </div>
-                    <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-                           class="text-danger">
-                        Geçerli bir email adresi girin.
-                    </small>
-                    <small *ngIf="!registerForm.get('email')?.hasError('required') && registerForm.get('email')?.hasError('minlength') || registerForm.get('email')?.hasError('maxlength')"
-                           class=" text-danger">
-                        Email 3-50 karakter arasi olabilir
-                    </small>
-
-                    <label for="password" class="form-label">Şifre</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="password" formControlName="password"
-                               placeholder="Şifre" required>
-                    </div>
-                    <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                           class="small text-danger">
-                        Şifre gerekli.
-                    </small>
-
-                    <label for="confirmPassword" class="form-label">Şifreyi Onayla</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="confirmPassword"
-                               formControlName="confirmPassword"
-                               placeholder="Şifreyi Onayla" required>
-                    </div>
-                    <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"
-                         class="small text-danger">
-                        Şifreyi tekrar girin.
-                    </div>
-                    <div *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
-                         class="small text-danger">
-                        Şifreler eşleşmiyor.
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="card-title mb-0">Kayıt Ol</h3>
                 </div>
-                <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Kayıt Ol</button>
-            </form>
-        </div>
-      </div>
-    </div>
-  </div>
+                <div class="card-body p-4">
+                    <!--suppress AngularUndefinedBinding -->
+                    <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Ad Soyad</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="fullName" formControlName="fullName"
+                                       placeholder="Ad Soyad" required autocomplete="fullName">
+                            </div>
+                            <small *ngIf="registerForm.get('fullName')?.touched">
+                                <small *ngIf="registerForm.get('fullName')?.hasError('required')"
+                                       class="text-danger ">
+                                    Ad Soyad gerekli.
+                                </small>
+                                <small *ngIf="registerForm.get('fullName')?.hasError('minlength') || registerForm.get('fullName')?.hasError('maxlength')"
+                                       class=" text-danger ">
+                                    Ad Soyad 3-50 karakter arasi olabilir
+                                </small>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Kullanıcı Adı</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="userName" formControlName="userName"
+                                       placeholder="Kullanıcı Adı" required autocomplete="userName">
+                            </div>
+                            <small *ngIf="registerForm.get('userName')?.touched">
+                            <small *ngIf=" registerForm.get('userName')?.hasError('required')"
+                                   class="text-danger ">
+                                Kullanıcı Adı gerekli.
+                            </small>
+                            <small *ngIf=" registerForm.get('userName')?.hasError('minlength') || registerForm.get('userName')?.hasError('maxlength')"
+                                   class=" text-danger ">
+                                Kullanıcı Adı 3-50 karakter arasi olabilir
+                            </small>
+                        </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="email" formControlName="email"
+                                       placeholder="Email"
+                                       required autocomplete="email">
+                            </div>
+                            <small *ngIf="registerForm.get('email')?.touched">
+                                <small *ngIf="registerForm.get('email')?.hasError('required')"
+                                       class=" text-danger ">
+                                    Email gerekli.
+                                </small>
+                                <small *ngIf="registerForm.get('email')?.hasError('email')"
+                                       class=" text-danger ">
+                                    Geçerli bir email adresi giriniz.
+                                </small>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                                <label for="password" class="form-label">Şifre</label>
+                               <div class="input-group">
+                                <input type="password" class="form-control"
+                                       id="password"
+                                       formControlName="password"
+                                       placeholder="Şifre"
+                                       required>
+                               </div>
+
+                            <small *ngIf="registerForm.get('password')?.touched">
+
+                                <small *ngIf="registerForm.get('password')?.hasError('required')"
+                                       class=" text-danger ">
+                                    Şifre boş olamaz
+                                </small>
+
+                                <small *ngIf="registerForm.get('password')?.hasError('maxlength') || registerForm.get('password')?.hasError('minlength')"
+                                       class="text-danger">
+                                    Şifre 6-50 karakter arasi olabilir.
+                                </small>
+
+                                <small *ngIf="registerForm.get('password')?.hasError('pattersn')
+                                        && !(registerForm.get('password')?.hasError('maxlength') || registerForm.get('password')?.hasError('minlength'))"
+                                       class=" text-danger ">
+                                    Şifre en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter
+                                    içermelidir.
+                                </small>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Şifreyi Onayla</label>
+                            <div class="input-group">
+                            <input type="password"
+                                   class="form-control"
+                                   id="confirmPassword"
+                                   formControlName="confirmPassword"
+                                   placeholder="Şifreyi Onayla" required>
+                            </div>
+                            <small *ngIf="registerForm.get('confirmPassword')?.touched">
+                                <small *ngIf="registerForm.get('confirmPassword')?.hasError('required')" class="text-danger">
+                                    Şifre tekrar boş olamaz
+                                </small>
+                                <small *ngIf="registerForm.get('confirmPassword')?.hasError('mustMatch')" class="text-danger">
+                                    Şifreler eşleşmiyor
+                                </small>
+                            </small>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Kayıt Ol
+                        </button>
+
+                    </form>
+                 </div>
+             </div>
+         </div>
+     </div>
 </div>

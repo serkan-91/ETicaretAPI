@@ -7,7 +7,11 @@ import {   ToastrService } from 'ngx-toastr';
 export class CustomToastrService {
   constructor(private toastr: ToastrService) { }
 
-  message(message: string, title: string, toastrOptions: Partial<ToastrOptions>) {
+  message(
+      message: string,
+      title: string,
+      toastrOptions: Partial<ToastrOptions>)
+  {
     const messageType = toastrOptions.messageType ?? ToastrMessageType.Success;
     const position = toastrOptions.position ?? ToastrPosition.TopRight;
 
@@ -15,9 +19,9 @@ export class CustomToastrService {
     } 
 } 
 
-export class ToastrOptions {
-  messageType: ToastrMessageType = ToastrMessageType.Success;
-  position: ToastrPosition = ToastrPosition.TopRight;
+export interface ToastrOptions {
+  messageType: ToastrMessageType;
+  position: ToastrPosition;
 }
 export enum ToastrMessageType {
   Success = 'success',

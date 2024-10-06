@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
-import { Create_Product } from '../../../contracts/create_product';
-import { Product, ProductsResponse } from '../../../contracts/list_product';
-import { BaseComponent } from '../../../base/base.component';
+import { Create_Product } from '@app/contracts/create_product';
+import { Product, ProductsResponse } from '@app/contracts/list_product';
+import { BaseComponent } from '@app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
-import { ProductImage } from '../../../contracts/list_product_image';
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { ProductImage } from '@app/contracts/list_product_image';
+import { HttpHeaders } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })

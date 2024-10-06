@@ -1,4 +1,6 @@
 ﻿using EticaretAPI.API.Helpers.Common;
+using EticaretAPI.Application.Features.Commands.ApplicationUser.Login;
+using EticaretAPI.Application.Features.Commands.ApplicationUser.Register;
 using EticaretAPI.Application.Features.Commands.Product.Create;
 using EticaretAPI.Application.Features.Commands.Product.Remove;
 using EticaretAPI.Application.Features.Commands.Product.Update;
@@ -134,6 +136,35 @@ public static class MinimalApiExtensions
 					Files = FileService.ConvertToFileDtos(files),
 				};
 				return Results.Ok(await _mediator.Send(request, cancellationToken));
+			}
+		);
+	}
+
+	public static void MapUsersEndPoint(this IEndpointRouteBuilder app)
+	{
+		app.MapPost(
+			"/api/users/CreateUser",
+			async (
+				[FromServices] IMediator _mediator,
+				[FromBody] CreateUserCommandRequest request,
+				[FromServices] IValidator<CreateUserCommandRequest> validator
+			) =>
+			{
+				var validationResult = await validator.ValidateAsync(request);
+				if (!validationResult.IsValid)
+					return Results.BadRequest(validationResult.Errors);
+				return Results.Ok(await _mediator.Send(request));
+			}
+		);
+
+		app.MapPost(
+			"/api/users/LoginUser",
+			async (
+				[FromServices] IMediator _mediator,
+				[FromBody] LoginUserCommandRequest request
+			) =>
+			{
+				return Results.Ok(await _mediator.Send(request));
 			}
 		);
 	}

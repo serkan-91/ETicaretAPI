@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { BaseDialog } from '../base/base-dialogs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FileUploadOptions } from '../../services/common/file-upload/file-upload.component';
-import { ProductService } from '../../services/common/models/product.service';
-import {   ProductImage   } from '../../contracts/list_product_image';
+import { FileUploadOptions } from '@app/services/common/file-upload/file-upload.component';
+import { ProductService } from '@app/services/common/models/product.service';
+import {   ProductImage   } from '@app/contracts/list_product_image';
 import { BehaviorSubject, Observable, delay  } from 'rxjs';
-import { DialogService } from '../../services/common/dialog.service';
+import { DialogService } from '@app/services/common/dialog.service';
 import { DeleteDialogComponent, DeleteState } from '../delete-dialog/delete-dialog.component';
 
 @Component({

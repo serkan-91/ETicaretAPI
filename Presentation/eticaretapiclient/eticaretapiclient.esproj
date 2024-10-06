@@ -8,6 +8,12 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\eticaretclient\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="dist\**" />
+    <None Remove="out\**" />
+    <TypeScriptConfiguration Remove="dist\**" />
+    <TypeScriptConfiguration Remove="out\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="src\app\ui\components\register\register.component.html" />
     <None Remove="src\typing.d.ts" />
   </ItemGroup>

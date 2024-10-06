@@ -8,12 +8,12 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import { MatSort, Sort } from '@angular/material/sort';
 import { DialogParameters, DialogService } from '../../../../services/common/dialog.service';
 import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
-import { AlertifyService, Position } from '../../../../services/admin/alertify.service';
+import { AlertifyService } from '../../../../services/admin/alertify.service';
 import { BaseComponent } from '../../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ProductService } from '../../../../services/common/models/product.service';
 import { FileUploadOptions } from '../../../../services/common/file-upload/file-upload.component'; 
-import { startWith, timeout } from 'rxjs';
+
 
 @Component({
   selector: 'app-list',
@@ -57,7 +57,7 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
     super(_spinner);
   }
   ngOnInit(): void {
-    this.loadProducts(0, this.pageSize);  // İlk yüklemede ürünleri getir
+    this.loadProducts(0, this.pageSize);
   }
 
   ngAfterViewInit() {
@@ -148,8 +148,8 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
     this.productService.read(pageIndex, pageSize, false).subscribe(response => {
       this.dataSource.data = response.pagingResult.items;
       this.totalCount = response.pagingResult.totalCount;
-      this.sort.active,
-       this.sort.direction,
+      // this.sort.active,
+      //  this.sort.direction,
        this.paginator.length = this.totalCount;
       this.isLoadingResults = false;
     });

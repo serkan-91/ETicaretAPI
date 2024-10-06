@@ -19,9 +19,8 @@ export class CsrfInterceptorService implements HttpInterceptor {
             const clonedRequest = req.clone({
               headers: req.headers.set('RequestVerificationToken', csrfToken)
             });
-            return next.handle(clonedRequest); // Yeni isteği işleme al
+            return next.handle(clonedRequest);
           }
-          // Eğer zaten token varsa veya token alınmamışsa orijinal isteği işleme al
           return next.handle(req);
         })
       );
