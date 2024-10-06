@@ -1,18 +1,16 @@
-import { Component, EventEmitter, Output, ViewChild, inject, AfterViewInit, OnInit } from '@angular/core';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Component, EventEmitter, Output, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { PagingResult, Product } from '../../../../contracts/list_product';
+import { PagingResult, Product } from '@app/contracts/list_product';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { FaIconService } from '../../../../services/common/fa-Icon.service';
+import { FaIconService } from '@app/services/common/fa-Icon.service';
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
-import { MatSort, Sort } from '@angular/material/sort';
-import { DialogParameters, DialogService } from '../../../../services/common/dialog.service';
-import { SelectProductImageDialogComponent } from '../../../../dialogs/select-product-image-dialog/select-product-image-dialog.component';
-import { AlertifyService } from '../../../../services/admin/alertify.service';
-import { BaseComponent } from '../../../../base/base.component';
+import { MatSort } from '@angular/material/sort';
+import { DialogParameters, DialogService } from '@app/services/common/dialog.service';
+import { SelectProductImageDialogComponent } from '@app/dialogs/select-product-image-dialog/select-product-image-dialog.component';
+import { BaseComponent } from '@app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ProductService } from '../../../../services/common/models/product.service';
-import { FileUploadOptions } from '../../../../services/common/file-upload/file-upload.component'; 
+import { ProductService } from '@app/services/common/models/product.service';
+import { FileUploadOptions } from '@app/services/common/file-upload/file-upload.component';
 
 
 @Component({
@@ -27,9 +25,6 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
     isAdminPage: true,
     accept: '.png, .jpg, .jpeg, .pdf, .mp4'
   }
-
-  private _liveAnnouncer = inject(LiveAnnouncer);
-
   @Output() pageChange = new EventEmitter<PageEvent>(); // Emit page change events
   displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate', 'photos', 'edit', 'delete'];
     ProductModel?: (PagingResult<Product>) 
@@ -51,7 +46,6 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
   constructor(
     private faIconService: FaIconService,
     private dialogService: DialogService,
-    private alertify: AlertifyService,
     private productService: ProductService,
     _spinner: NgxSpinnerService) {
     super(_spinner);
@@ -74,7 +68,7 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
     });
   }
 
-  trackById(item: any) {
+  trackById(item: Product) {
     return item.id;
   }
 
@@ -131,13 +125,7 @@ export class ListComponent extends BaseComponent implements OnInit, AfterViewIni
     }, 500);  // 500ms gecikme
   }
 
-  announceSortChange(sortState: Sort) {
-    if (sortState.direction) {
-      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
-    } else {
-      this._liveAnnouncer.announce('Sorting cleared');
-    }
-  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
